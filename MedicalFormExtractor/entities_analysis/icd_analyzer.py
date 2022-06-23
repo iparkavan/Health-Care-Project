@@ -43,7 +43,7 @@ class ICDMatcher:
 
     def get_icd_data(self):
         vector1 = self.text_to_vector(self._data)
-        with open('dataextract\icd10_desc.json', 'r') as icd_file:
+        with open('icd10_desc.json', 'r') as icd_file:
             icd_dict_data_1 = json.load(icd_file)
             for key, val in icd_dict_data_1.items():
                 vector2 = self.text_to_vector(val[1])
@@ -52,7 +52,7 @@ class ICDMatcher:
                     self._key = key
                     self._icd_desc = val[1]
                     self._max_match = cosine
-        with open('dataextract\icd_dump.json', 'r') as icd_file:
+        with open('icd_dump.json', 'r') as icd_file:
             icd_dict_data_2 = json.load(icd_file)
             for key, val in icd_dict_data_2.items():
                 vector2 = self.text_to_vector(val['desc'])

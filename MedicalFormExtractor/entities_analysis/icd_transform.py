@@ -1,7 +1,7 @@
 import json
 import string
 
-from xml_parse import ICD
+from entities_analysis.xml_parse import ICD
 
 
 class ICDTransform:
