@@ -16,7 +16,7 @@ class Extract(object):
     def extractContent(self):
         
         content = self.getContent()
-        keyValuePairs = self.getKeyValuePair()
+        keyValuePairs = self.getKeyValuePair(content)
         tableContents = self.getTableContent(content)
         lineContents = self.getLineContent(content)
         
@@ -24,38 +24,33 @@ class Extract(object):
        
         
     def getContent(self):
-        with open("response_sample2.json", "w") as fwriter:
-            json.dump(self._response, fwriter)
-        with open("response_sample2.json") as freader:
-            content = json.load(freader)
-        content = trp.Document(content)
+        content = trp.Document(self._response)
         return content
     
     
     
-    def getKeyValuePair(self):
-        key_map, value_map, block_map = self.get_kv_map(self._response)
+    def getKeyValuePair(self, content):
+        key_map, value_map, block_map = self.get_kv_map(content)
         kvs = self.get_kv_relationship(key_map, value_map, block_map)
         return kvs
 
 
 
     def get_kv_map(self, content):
-
-        blocks = content['Blocks']
-
-        # get key and value maps
-        key_map = {}
-        value_map = {}
-        block_map = {}
-        for block in blocks:
-            block_id = block['Id']
-            block_map[block_id] = block
-            if block['BlockType'] == "KEY_VALUE_SET":
-                if 'KEY' in block['EntityTypes']:
-                    key_map[block_id] = block
-                else:
-                    value_map[block_id] = block
+        for block in content.blocks:
+            blocks = block['Blocks']
+            # get key and value maps
+            key_map = {}
+            value_map = {}
+            block_map = {}
+            for block in blocks:
+                block_id = block['Id']
+                block_map[block_id] = block
+                if block['BlockType'] == "KEY_VALUE_SET":
+                    if 'KEY' in block['EntityTypes']:
+                        key_map[block_id] = block
+                    else:
+                        value_map[block_id] = block
     
         return key_map, value_map, block_map
 
@@ -145,9 +140,6 @@ class Extract(object):
                         if word['BlockType'] == 'SELECTION_ELEMENT':
                             if word['SelectionStatus'] == 'SELECTED':
                                 text += 'X '
-                               
-     
-        #print(text)
         if extype == "key":
             return text , width , height , top , left
         else :

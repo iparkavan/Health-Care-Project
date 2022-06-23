@@ -1,8 +1,8 @@
 from lxml import etree
-from icd_request import extractapi
+from entities_analysis.icd_request import extractapi
 import json
 
-tree = etree.parse("dataextract\icd10cm_tabular_2023.xml")
+tree = etree.parse("icd10cm_tabular_2023.xml")
 EXCLUDE_FIELDS = ['Name', 'Valid', 'Response']
 
 
@@ -32,7 +32,7 @@ class ICD:
             return
 
     def get_icd_data(self):
-        with open('dataextract\icd_dump.json', 'r') as icd_file:
+        with open('icd_dump.json', 'r') as icd_file:
             icd_dict = json.load(icd_file)
         if self._icd_value in icd_dict.keys():
             self._result["Response"] = 'True'
@@ -42,7 +42,7 @@ class ICD:
             self._result['Details'] = icd_dict[self._icd_value]
 
     def get_icd_data_dump(self):
-        with open('dataextract\icd10_desc.json', 'r') as icd_file:
+        with open('icd10_desc.json', 'r') as icd_file:
             icd_dict = json.load(icd_file)
         self._icd_value_new = self._icd_value.replace('.', '')
         if self._icd_value_new in icd_dict.keys():
@@ -68,10 +68,10 @@ class ICD:
                         if key == 'Description':
                             key = 'desc'
                         new_icd_dict[self._icd_value][key] = val
-                with open('dataextract\icd_dump.json', 'r') as icd_file_read:
+                with open('icd_dump.json', 'r') as icd_file_read:
                     icd_dict = json.load(icd_file_read)
                 icd_dict.update(new_icd_dict)
-                with open('dataextract\icd_dump.json', 'w') as icd_file_write:
+                with open('icd_dump.json', 'w') as icd_file_write:
                     json.dump(icd_dict, icd_file_write, indent=4)
 
         return self._result
@@ -104,5 +104,5 @@ class ICD:
                     icd_dict[name.text][val.tag] = []
                     for elem in val.iterchildren():
                         icd_dict[name.text][val.tag].append(elem.text)
-        with open('dataextract\icd_dump.json', 'w') as icd_file:
+        with open('icd_dump.json', 'w') as icd_file:
             json.dump(icd_dict, icd_file, indent=4)

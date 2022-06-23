@@ -5,6 +5,7 @@ Created on Fri Jun 17 10:46:50 2022
 @author: DK
 """
 
+from pprint import pprint
 
 class ExtractMedicalInfo(object):
 
@@ -38,6 +39,29 @@ class ExtractMedicalInfo(object):
          
         self._refReason = None
         self._diagnosis = None
+    
+    def get_extracted_record(self):
+        return {
+            "Patient Name": self._patientName,
+            "Patient DOB": self._patientDOB,
+            "Patient MRN": self._patientMRN,
+            "Patient Gender": self._patientGender,
+            "Patient Address": self._patientAddress,
+            "Patient Phone": self._patientPhone,
+            "Patient City": self._patientCity,
+            "Ref To Name": self._refToName,
+            "Ref To Date": self._refToDate,
+            "Ref To Address": self._refToAddress,
+            "Ref To City": self._refToCity,
+            "Ref To Phone": self._refToPhone,
+            "Ref By Name": self._refByName,
+            "Ref By Address": self._refByAddress,
+            "Ref By City": self._refByCity,
+            "Ref By Phone": self._refByPhone,
+            "Ref By Fax": self._refByFax,
+            "Ref reason": self._refReason,
+            "Diagnosis": self._diagnosis,
+        }
         
     def extract(self):
         
@@ -46,28 +70,6 @@ class ExtractMedicalInfo(object):
         self.extractInfoFromTable()
         
         self.extractMissingInfoByLine()
-        
-            
-        print("-----------------------")
-        print("Patient Name :" ,self._patientName ,'\n',
-              "Patient DOB :" , self._patientDOB ,'\n',
-              "Patient MRN :" ,self._patientMRN ,'\n',
-              "Patient Gender :" , self._patientGender ,'\n',
-              "Patient Address: " ,self._patientAddress ,'\n',
-              "Patient Phone : " ,self._patientPhone ,'\n',
-              "Patient City : " ,  self._patientCity ,'\n',
-              "Rfereal To Name: " , self._refToName, '\n' , 
-              "Ref To Date :" , self._refToDate , '\n' , 
-              "Ref To Address :" , self._refToAddress , '\n',
-              "Ref To City:" , self._refToCity , '\n', 
-              "Ref To Phone:" , self._refToPhone , '\n',
-              "Ref By Name" , self._refByName , '\n',
-              "Ref By Address" ,  self._refByAddress, '\n',
-              "Ref By City" , self._refByCity , '\n',
-              "Ref By Phone" , self._refByPhone, '\n',
-              "Ref By Fax" ,  self._refByFax, '\n',
-              "Ref reason " , self._refReason, '\n',
-              "Diagnosis", self._diagnosis),       
 
 
     def extractInfoFromTable(self):
