@@ -52,13 +52,16 @@ class ICD:
             self._result["Mode"] = 'dump'
             self._result['Details'] = {}
 
-    def run(self):
-        new_icd_dict = {}
+    def run_dump(self):
         self.get_gen_icd()
         if not self._error:
             self.get_icd_data()
         if not self._error and self._result.get('Response') == 'False':
             self.get_icd_data_dump()
+        return self._result
+
+    def run_api(self):
+        new_icd_dict = {}
         if not self._error and self._result.get('Response') == 'False':
             self._result = extractapi(self._icd_value)
             if self._result.get('Response') == 'True':
@@ -73,7 +76,6 @@ class ICD:
                 icd_dict.update(new_icd_dict)
                 with open('icd_dump.json', 'w') as icd_file_write:
                     json.dump(icd_dict, icd_file_write, indent=4)
-
         return self._result
 
     @staticmethod

@@ -1,0 +1,36 @@
+{
+    "MedInfoJsonMap": {
+        "patient_name": "_patientName",
+        "patient_dob": "_patientDOB",
+        "patient_mrn": "_patientMRN",
+        "patient_gender": "_patientGender",
+        "patient_address": "_patientAddress",
+        "patient_phone": "_patientPhone",
+        "patient_city": "_patientCity",
+        "patient_st_zip": "_patientStZip",
+        "patient_state": "_patientState",
+        "ref_to_name": "_refToName",
+        "ref_date": "_refToDate",
+        "ref_to_address": "_refToAddress",
+        "ref_to_city": "_refToCity",
+        "ref_to_st_zip": "_refToStZip",
+        "ref_to_state": "_refToState",
+        "ref_to_phone": "_refToPhone",
+        "ref_to_fax": "_refToFax",
+        "ref_by_name": "_refByName",
+        "ref_by_address": "_refByAddress",
+        "ref_by_city": "_refByCity",
+        "ref_by_st_zip": "_refByZip",
+        "ref_by_state": "_refByState",
+        "ref_by_phone": "_refByPhone",
+        "ref_by_fax": "_refByFax",
+        "ref_reason": "_refReason",
+        "primary_billing_diagnosis": "_diagnosis"
+    },
+    "ICDInfoJsonMap": {
+        "icd_code": "_icd_code",
+        "icd_code_list": "_icd_list",
+        "icd_description": "_icd_desc",
+        "icd_info": "_icd_info"
+    }
+}
