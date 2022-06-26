@@ -11,7 +11,11 @@ curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d
 
 ## Sample S3 event
 
+S3 arn: arn:aws:s3:::data-store-igs 
 
+S3 Bucket Name: data-store-igs
+
+sample pdf: s3://data-store-igs/raw/C215.pdf
 
 '''
 {
