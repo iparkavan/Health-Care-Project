@@ -39,6 +39,10 @@ class ExtractMedicalInfo(object):
          
         self._refReason = None
         self._diagnosis = None
+        
+        self._icd_code = None
+        self._icd_desc = None
+        self._icd_info = None
     
     def get_extracted_record(self):
         return {
