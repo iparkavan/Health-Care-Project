@@ -8,10 +8,12 @@ from medicalformextractor.Extract import Extract
 from medicalformextractor.ExtractMedicalInfo import ExtractMedicalInfo
 from entities_analysis.transformations import MedTransformation
 from pprint import pprint
-
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 s3 = boto3.resource('s3')
-textract = boto3.client("textract", region_name='ap-south-1')
+textract = boto3.client("textract", region_name='us-east-1')
 s3_cli = boto3.client('s3')
 
 
@@ -60,21 +62,21 @@ def process_file(bucket, key):
         keyValuePairs, tableContents, lineContents = extract.extractContent()
         extractMedicalInfo = ExtractMedicalInfo(keyValuePairs, tableContents, lineContents)
         extractMedicalInfo.extract()
-
+        logger.info(f"Extracted first level of information")
         # Fix ICD10 codes
         transformedInfo = MedTransformation()
         transformedInfo.run(extractMedicalInfo)
         finalMedJson = transformedInfo.mapMedInfo(extractMedicalInfo)
-
+        logger.info(f"Applied Medical transformations")
         pprint(finalMedJson)
-
+        # Save the json to S3 bucket
         response_key = f"extracted_info/{file_name.stem}_info.json"
         s3_cli.put_object(Body=json.dumps(finalMedJson), Bucket=bucket, Key=response_key)
 
         print(f"Completed extracting the data ...")
     except Exception as e:
         print(e)
-        print('Error processing {} from bucket {}.'.format(key, bucket))
+        logger.error('Error processing {} from bucket {}.'.format(key, bucket), exc_info=True)
 
 
 def lambda_handler(event, context):

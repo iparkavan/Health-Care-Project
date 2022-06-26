@@ -4,11 +4,12 @@ region = "us-east-1"
 
 client = boto3.client('comprehendmedical',
                       region_name=region,
-                      aws_access_key_id="AKIAWOINZBSCR2Q6ZMLQ",
-                      aws_secret_access_key="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")
+                      #aws_access_key_id="AKIAWOINZBSCR2Q6ZMLQ",
+                      #aws_secret_access_key="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"
+                      )
 
 
-@staticmethod
+#@staticmethod
 def get_icd_medcomp(text):
     code, desc, score = None, None, None
     icd_response = []
@@ -31,7 +32,7 @@ def get_icd_medcomp(text):
     return None, None, None
 
 
-@staticmethod
+#@staticmethod
 def check_medcomp(response, code):
     for val in response:
         if val['Code'] == code:
