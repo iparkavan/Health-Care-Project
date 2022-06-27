@@ -83,9 +83,7 @@ class Extract(object):
         index = "table"
         tblcntnt = []
         for page in range(pages):
-            print(page)
             tbl = len(doc.pages[page].tables)
-            print(tbl)
             for tb in range(tbl):
                 ttt = []
                 content = (doc.pages[page].tables[tb])

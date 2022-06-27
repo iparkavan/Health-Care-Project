@@ -20,7 +20,7 @@
         "ref_by_name": "_refByName",
         "ref_by_address": "_refByAddress",
         "ref_by_city": "_refByCity",
-        "ref_by_st_zip": "_refByZip",
+        "ref_by_st_zip": "_refByStZip",
         "ref_by_state": "_refByState",
         "ref_by_phone": "_refByPhone",
         "ref_by_fax": "_refByFax",

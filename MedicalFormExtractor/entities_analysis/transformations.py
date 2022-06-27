@@ -25,30 +25,33 @@ class MedTransformation:
         for key, value in icd_json_map.items():
             self.medInfoJson[key] = getattr(self, value)
             
-        # with open('icd_dump.json', 'r') as icd_file_read:
-        #     icd_dict = json.load(icd_file_read)  
-        # new_icd_dict = {}
-        # if self._icd_code:
-        #     if self._icd_code not in icd_dict.keys() and self._icd_desc:
-        #         new_icd_dict = {
-        #             self._icd_code : {
-        #                 "desc" : self._icd_desc
-        #             }
-        #         }
-        #         icd_dict.update(new_icd_dict)
-        #         with open('icd_dump.json', 'w') as icd_file_write:
-        #             json.dump(icd_dict, icd_file_write, indent=4)       
-        # elif self._icd_list:
-        #     for val in self._icd_list:
-        #         if val['Code'] not in icd_dict.keys():
-        #             new_icd_dict = {
-        #                 val['Code'] : {
-        #                     "desc" : val['Description']
-        #                 }
-        #             }
-        #             icd_dict.update(new_icd_dict)
-        #     with open('icd_dump.json', 'w') as icd_file_write:
-        #         json.dump(icd_dict, icd_file_write, indent=4)
+        try:
+            with open('icd_dump.json', 'r') as icd_file_read:
+                icd_dict = json.load(icd_file_read)  
+            new_icd_dict = {}
+            if self._icd_code:
+                if self._icd_code not in icd_dict.keys() and self._icd_desc:
+                    new_icd_dict = {
+                        self._icd_code : {
+                            "desc" : self._icd_desc
+                        }
+                    }
+                    icd_dict.update(new_icd_dict)
+                    with open('icd_dump.json', 'w') as icd_file_write:
+                        json.dump(icd_dict, icd_file_write, indent=4)       
+            elif self._icd_list:
+                for val in self._icd_list:
+                    if val['Code'] not in icd_dict.keys():
+                        new_icd_dict = {
+                            val['Code'] : {
+                                "desc" : val['Description']
+                            }
+                        }
+                        icd_dict.update(new_icd_dict)
+                with open('icd_dump.json', 'w') as icd_file_write:
+                    json.dump(icd_dict, icd_file_write, indent=4)
+        except Exception:
+            pass
         
         return self.medInfoJson
 
@@ -57,6 +60,7 @@ class MedTransformation:
         parsed_icd_code = extractInfo._icd_code
         parsed_icd_desc = extractInfo._icd_desc
         self._icd_info = extractInfo._icd_info
+
 
         if not parsed_icd_desc and parsed_icd_code:
             # ICD Code is given/invalid and No ICD desc
