@@ -23,6 +23,8 @@ class ExtractMedicalInfo(object):
         self._patientAddress = None
         self._patientPhone = None
         self._patientCity = None
+        self._patientStZip = None
+        self._patientState = None
         
         self._refToName = ""
         self._refToDate = None
@@ -30,15 +32,23 @@ class ExtractMedicalInfo(object):
         self._refToCity = None
         self._refToPhone = None
         self._refToFax = None 
+        self._refToStZip = None
+        self._refToState = None
 
         self._refByName = ""
         self._refByAddress = None
         self._refByCity = None
         self._refByPhone = None
         self._refByFax = None
+        self._refByStZip = None
+        self._refByState = None
          
         self._refReason = None
         self._diagnosis = None
+        
+        self._icd_code = None
+        self._icd_desc = None
+        self._icd_info = None
     
     def get_extracted_record(self):
         return {
@@ -137,7 +147,6 @@ class ExtractMedicalInfo(object):
                         if round(line[1][2],2) >= newTop:
                             if round(line[1][2],2) <= (round(top,2)) :
                                 if ("information" in line[0].lower()) or (("patient") in line[0].lower() ):                                       
-                                    print(line[0])    
                                     pateintInformationTable = True
                                     
                                     return top , height , tableContent[0]
@@ -198,7 +207,6 @@ class ExtractMedicalInfo(object):
                         if round(line[1][2],2) >= newTop:
                             if round(line[1][2],2) <= (round(top,2)) :
                                 if ("information" in line[0].lower()) or (("refer") in line[0].lower() ):                                       
-                                    print(line[0])    
                                     referalInformationTable = True
                                     
                                     return top , height , tableContent[0]
