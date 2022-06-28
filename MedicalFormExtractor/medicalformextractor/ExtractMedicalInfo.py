@@ -207,7 +207,8 @@ class ExtractMedicalInfo(object):
             #if eval(self._controlStatement.get("icd")) in content[0].lower():
                 if content[1]:
                     if not self._icdCode:
-                        self._icdCode = content[1]
+                        if re.search('^[a-zA-Z0-9\.]+$', self._icdCode):
+                            self._icdCode = content[1]
 
             if eval(self.generateIfCond(self._controlStatement.get("female"),'content[0].lower()' )):
                 if "x" in content[1].lower():
