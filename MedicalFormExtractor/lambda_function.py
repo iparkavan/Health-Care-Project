@@ -47,7 +47,7 @@ def ocr_pages(pdf, bucket, file_name):
     return all_pages_responses
 
 
-def process_file(bucket, key):
+def process_file(bucket, key, request_id):
     try:
         bucket_obj = s3.Bucket(bucket)
         obj = s3.Object(bucket, key)
@@ -71,20 +71,22 @@ def process_file(bucket, key):
         logger.info(f"Applied Medical transformations")
         pprint(finalMedJson)
         #Data Ingestion
+        finalMedJson['s3_file_path'] = f"s3://{bucket}/{key}" # Add the s3 file path to the record
+        finalMedJson['request_id'] = 
         response = insert_records([finalMedJson], "MedicalInfoExtractData")
         print(" response of Insertion", response)
         # Save the json to S3 bucket
         response_key = f"extracted_info/{file_name.stem}_info.json"
-        s3_cli.put_object(Body=json.dumps(finalMedJson), Bucket=bucket, Key=response_key)
+        s3_cli.put_object(Body=json.dumps([finalMedJson]), Bucket=bucket, Key=response_key)
 
         print(f"Completed extracting the data ...")
     except Exception as e:
-        print(e)
         logger.error('Error processing {} from bucket {}.'.format(key, bucket), exc_info=True)
-
+        # TODO: Insert the record to error table
 
 def lambda_handler(event, context):
+    request_id = context.aws_request_id
     # Get the object from the event and show its content type
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
-    process_file(bucket, key)
+    process_file(bucket, key, request_id)

@@ -6,8 +6,8 @@ boto3
 requests
 pymupdf
 lxml
-#psycopg2-binary
-#SQLAlchemy
+psycopg2-binary
+SQLAlchemy
 python-dotenv
 rapidfuzz
 pyyaml
