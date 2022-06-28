@@ -72,7 +72,7 @@ def process_file(bucket, key, request_id):
         pprint(finalMedJson)
         #Data Ingestion
         finalMedJson['s3_file_path'] = f"s3://{bucket}/{key}" # Add the s3 file path to the record
-        finalMedJson['request_id'] = 
+        finalMedJson['request_id'] = request_id
         response = insert_records([finalMedJson], "MedicalInfoExtractData")
         print(" response of Insertion", response)
         # Save the json to S3 bucket
