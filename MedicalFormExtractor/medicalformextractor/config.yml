@@ -1,0 +1,217 @@
+keywords:
+    keyvaluepair:
+        patientname:
+              - patient & name
+        patientmrn:
+              - mrn
+        patientdob:
+              - dob 
+              - birth
+        patientgender:
+              - gender 
+              - sex
+        male:
+              - male
+        female:
+              - female           
+        refertotname:
+              - refer & name 
+              - refer & to 
+              - refer  & physician
+        referreason:
+              - refer & reason
+
+        diagnosis:
+              - diagnosis 
+        refertodate:
+              - refer & $date
+              - refer & $on
+              
+              
+              
+        referbyname:
+              - refer & from
+              - refer & by 
+        icd:
+              - icd 
+              - diagnosis & code
+              
+              
+    tableinformation:
+    
+        patient:
+              - patient
+              - name
+        patienttable:
+              - patient & information
+
+        patientPhoneInTable:
+              - phone
+              - mobile
+              - contact & number
+              - $cell
+        patientAddressInTable:
+              - address & ~symptom & ~issue
+               
+        patientCityAndZipInTable:
+              - city & zip
+        patientCityInTable:
+              - city & ~zip
+        patientZipInTable:
+              - zip & ~city
+        patientStateInTable:
+              - state
+              
+              
+        refer:
+              - refer
+              - name
+        refertable:
+              - refer & information
+              - refer &  details
+
+        referToAddressInTable:
+              - address & ~symptom & ~issue
+              
+        referToCityAndZipInTable:
+              - city & zip
+        referToCityInTable:
+              - city & ~zip
+        referToZipInTable:
+              - zip & ~city
+        referToStateInTable:
+              - state
+        referToPhoneInTable:
+              - phone
+              - mobile
+              - contact & number
+              - $cell
+        referToStateInTable:
+              - state
+        referToDateInTable: 
+              - date
+              - $on
+        referToFaxInTable:
+              - fax
+
+
+    lineWiseinformation:
+    
+        patientInfoInLine:
+              - patient &   information
+              - patient & name 
+              - patient & profile 
+              - applicant & information 
+              - applicant & name       
+              - applicant & profile                 
+              - client & information 
+              - client & name  
+              - client & profile  
+              
+        patientDOBInLine:
+              - dob
+              - birth
+        patientMRNInLine:
+              - mrn
+        patientGenderInLine:
+              - gender
+              - sex              
+        patientAddressInLine:
+              - address & ~symptom & ~issue
+               
+        patientPhoneInLine:
+              - phone
+              - mobile
+              - contact & number  
+              - $cell              
+        patientCityAndZipInLine:
+              - city & zip
+        patientCityInLine:
+              - city & ~zip
+        patientZipInLine:
+              - zip & ~city
+        patientStateInLine:
+              - state  
+
+
+
+        referToInfoInLine:
+              - refer &   information
+              - refer & name 
+              - refer & physician 
+              - refer & detail
+              - referring & provider              
+              
+        referToNameInLine:
+              - name 
+              - referring
+              - physician  
+              - refer & md               
+              - provider & name
+              
+        referToDateInLine:
+              - date
+              - $on
+        referToPhoneInLine:
+              - phone
+              - mobile
+              - $cell
+              - contact & number 
+          
+        referToAddressInLine:
+              - address & ~symptom & ~issue
+               
+            
+        referToCityAndZipInLine:
+              - city & zip
+        referToCityInLine:
+              - city & ~zip
+        referToZipInLine:
+              - zip & ~city
+        referToStateInLine:
+              - state   
+        referToFaxInLine:
+              - fax              
+              
+        referByInfoInLine:
+              - refer &   by
+              - diagnos & by 
+              - refer &   from
+              - diagnos & from 
+        referByNameInLine:
+              - by 
+              - from
+              - name   
+        referByPhoneInLine:
+              - phone
+              - mobile
+              - contact & number 
+              - $cell
+        referByAddressInLine:
+              - address & ~symptom & ~issue
+               
+            
+        referByCityAndZipInLine:
+              - city & zip
+        referByCityInLine:
+              - city & ~zip
+        referByZipInLine:
+              - zip & ~city
+        referByStateInLine:
+              - state   
+        referByFaxInLine:
+              - fax     
+              
+              
+        diagnosis:
+              - diagnosis 
+              
+        description:
+               - description 
+               - diagnosis
+        referralReason:
+               -  reason
+               
+        icdInfo:
+               - ~name & ~address & ~mrn & ~dob & ~birth & ~male & ~female & ~physician & ~date & ~$on & ~phone & ~mobile & ~contact & ~number & ~information & ~address & ~city & ~state & ~zip & ~fax
+
