@@ -53,6 +53,7 @@ class ExtractMedicalInfo(object):
         self._diagnosis = None
         self._icdCode = None 
         self._icdInfo = None
+        self._icdDesc = None
         
         
     def extract(self):
@@ -207,8 +208,9 @@ class ExtractMedicalInfo(object):
             #if eval(self._controlStatement.get("icd")) in content[0].lower():
                 if content[1]:
                     if not self._icdCode:
-                        if re.search('^[a-zA-Z0-9\.]+$', self._icdCode):
-                            self._icdCode = content[1]
+                        #[A-Za-z0-9.]
+                        # if re.search('^[a-zA-Z0-9\.]+$', self._icdCode):
+                        self._icdCode = re.sub('[^a-zA-Z0-9\.]+', '', content[1])
 
             if eval(self.generateIfCond(self._controlStatement.get("female"),'content[0].lower()' )):
                 if "x" in content[1].lower():

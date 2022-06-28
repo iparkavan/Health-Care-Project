@@ -4,6 +4,7 @@ import urllib.parse
 import boto3
 import fitz
 from pathlib import Path
+from data_ingestion.data_ingest import insert_records
 from medicalformextractor.Extract import Extract
 from medicalformextractor.ExtractMedicalInfo import ExtractMedicalInfo
 from entities_analysis.transformations import MedTransformation
@@ -69,6 +70,9 @@ def process_file(bucket, key):
         finalMedJson = transformedInfo.mapMedInfo(extractMedicalInfo)
         logger.info(f"Applied Medical transformations")
         pprint(finalMedJson)
+        #Data Ingestion
+        response = insert_records([finalMedJson], "MedicalInfoExtractData")
+        print(" response of Insertion", response)
         # Save the json to S3 bucket
         response_key = f"extracted_info/{file_name.stem}_info.json"
         s3_cli.put_object(Body=json.dumps(finalMedJson), Bucket=bucket, Key=response_key)
