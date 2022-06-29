@@ -23,6 +23,9 @@ class MedTransformation:
             self.medInfoJson[key] = getattr(extractInfo, value)
         icd_json_map = med_load_data["ICDInfoJsonMap"]
         for key, value in icd_json_map.items():
+            if key == 'icd_code_list' and value:
+                self.medInfoJson[key] = json.dumps(getattr(self, value))
+                continue
             self.medInfoJson[key] = getattr(self, value)
             
         try:
@@ -57,9 +60,9 @@ class MedTransformation:
 
     def run(self, extractInfo):
 
-        parsed_icd_code = extractInfo._icd_code
-        parsed_icd_desc = extractInfo._icd_desc
-        self._icd_info = extractInfo._icd_info
+        parsed_icd_code = extractInfo._icdCode
+        parsed_icd_desc = extractInfo._icdDesc
+        self._icd_info = extractInfo._icdInfo
 
 
         if not parsed_icd_desc and parsed_icd_code:
