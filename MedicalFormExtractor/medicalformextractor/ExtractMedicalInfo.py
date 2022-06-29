@@ -91,8 +91,8 @@ class ExtractMedicalInfo(object):
                     self._refByState = self._refByStZip.split(' ')[0]
                     self._refByStZip = self._refByStZip.split(' ')[1]
         
-        if self._icdCode:
-            self._icdInfo = self._icdCode
+        if self._icdCode and self._icdDesc:
+            self._icdInfo = None
         else:
             self._icdInfo = self.getIcdInfo()
         print("-----------------------")
