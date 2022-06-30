@@ -28,9 +28,9 @@
         "primary_billing_diagnosis": "_diagnosis"
     },
     "ICDInfoJsonMap": {
-        "icd_code": "_icd_code",
-        "icd_code_list": "_icd_list",
-        "icd_description": "_icd_desc",
-        "icd_info": "_icd_info"
+        "icd_code": "_icd_code_list",
+        "icd_code_group": "_icd_code_group",
+        "icd_desc": "_icd_desc_list",
+        "med_additional_info": "_icd_info"
     }
 }
