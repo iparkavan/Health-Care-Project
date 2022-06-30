@@ -11,3 +11,4 @@ SQLAlchemy
 python-dotenv
 rapidfuzz
 pyyaml
+pydantic

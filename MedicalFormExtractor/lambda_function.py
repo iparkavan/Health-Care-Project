@@ -5,11 +5,13 @@ import boto3
 import fitz
 from pathlib import Path
 from data_ingestion.data_ingest import insert_records
+from data_ingestion.process_log import DataLog
 from medicalformextractor.Extract import Extract
 from medicalformextractor.ExtractMedicalInfo import ExtractMedicalInfo
 from entities_analysis.transformations import MedTransformation
 from pprint import pprint
 import logging
+from datetime import datetime
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -47,7 +49,7 @@ def ocr_pages(pdf, bucket, file_name):
     return all_pages_responses
 
 
-def process_file(bucket, key, request_id):
+def process_file(bucket, key, request_id, data_log: DataLog):
     try:
         bucket_obj = s3.Bucket(bucket)
         obj = s3.Object(bucket, key)
@@ -56,9 +58,19 @@ def process_file(bucket, key, request_id):
         n_pages = pdf.page_count
         file_name = Path(key)
         print(f"File {key} has {n_pages} page(s)")
+        data_log.submitted_to_textract = datetime.utcnow()
+        data_log.update_record()
         all_pages_responses = ocr_pages(pdf, bucket, file_name)
+
+        data_log.response_from_textract = datetime.utcnow()
+        data_log.update_record()
+
         print(f"Text extracted from all the pages.")
         # Run the data extractor
+
+        data_log.transformation_start = datetime.utcnow()
+        data_log.update_record()
+        
         extract = Extract(all_pages_responses)
         keyValuePairs, tableContents, lineContents = extract.extractContent()
         extractMedicalInfo = ExtractMedicalInfo(keyValuePairs, tableContents, lineContents)
@@ -68,6 +80,10 @@ def process_file(bucket, key, request_id):
         transformedInfo = MedTransformation()
         transformedInfo.run(extractMedicalInfo)
         finalMedJson = transformedInfo.mapMedInfo(extractMedicalInfo)
+        
+        data_log.transformation_end = datetime.utcnow()
+        data_log.update_record()
+        
         logger.info(f"Applied Medical transformations")
         pprint(finalMedJson)
         #Data Ingestion
@@ -83,10 +99,16 @@ def process_file(bucket, key, request_id):
     except Exception as e:
         logger.error('Error processing {} from bucket {}.'.format(key, bucket), exc_info=True)
         # TODO: Insert the record to error table
-
+        data_log.transformation_end = datetime.utcnow()
+        data_log.follow_up_reason = f"Error occured while processing ... {e}"
+        data_log.update_record()
 def lambda_handler(event, context):
     request_id = context.aws_request_id
     # Get the object from the event and show its content type
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
-    process_file(bucket, key, request_id)
+    data_log = DataLog(request_uuid=request_id, uploaded_s3_path=f"s3://{bucket}/{key}", event_received=datetime.utcnow())
+    data_log.update_record()
+    process_file(bucket, key, request_id, data_log)
+    data_log.event_completed = datetime.utcnow()
+    data_log.update_record()
