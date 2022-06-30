@@ -47,7 +47,8 @@ def run():
     keyValuePairs , tableContents , lineContents = extract.extractContent()
     
     extractMedicalInfo = ExtractMedicalInfo(keyValuePairs , tableContents , lineContents)
-    extractMedicalInfo.extract()
+    jsonMessage = extractMedicalInfo.extract()
+    print(jsonMessage)
     
     
     

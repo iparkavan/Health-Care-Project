@@ -5,8 +5,10 @@ COPY lambda_function.py ${LAMBDA_TASK_ROOT}
 #COPY data_ingest.py ${LAMBDA_TASK_ROOT}
 COPY entities_analysis ${LAMBDA_TASK_ROOT}/entities_analysis
 COPY medicalformextractor ${LAMBDA_TASK_ROOT}/medicalformextractor
+COPY data_ingestion ${LAMBDA_TASK_ROOT}/data_ingestion
 COPY *.json ${LAMBDA_TASK_ROOT}/
-#COPY *.env ${LAMBDA_TASK_ROOT}/
+COPY *.yml ${LAMBDA_TASK_ROOT}/
+COPY *.env ${LAMBDA_TASK_ROOT}/
 COPY *.xml ${LAMBDA_TASK_ROOT}/
 # Install the function's dependencies using file requirements.txt
 # from your project folder.
