@@ -22,11 +22,19 @@ class MedTransformation:
         icd_names = []
         new_icd_list = []
         for val in self._icd_code_group:
-            if val['Name'] in icd_names:
-                continue
-            else:
-                icd_names.append(val['Name'])
-                new_icd_list.append(val)
+            if val.get('Name'):               
+                if val['Name'] in icd_names:
+                    continue
+                else:
+                    icd_names.append(val['Name'])
+                    new_icd_list.append(val)
+                
+            if val.get('Code'):
+                if val['Code'] in icd_names:
+                    continue
+                else:
+                    icd_names.append(val['Code'])
+                    new_icd_list.append(val)
         return new_icd_list
 
     def mapMedInfo(self, extractInfo):
@@ -83,7 +91,7 @@ class MedTransformation:
         self._icd_info = extractInfo._icdInfo
 
         for i in range(len(parsed_icd_code)):
-            if not parsed_icd_desc[i] and parsed_icd_code[i]:
+            if not parsed_icd_desc[i] and parsed_icd_code[i]:          
                 # ICD Code is given/invalid and No ICD desc
 
                 icdObj = ICD(parsed_icd_code[i])
@@ -120,7 +128,7 @@ class MedTransformation:
 
             if parsed_icd_desc[i] and parsed_icd_code[i]:
                 # ICD Code is given and ICD desc is given
-                # Verify fetch desc on medcomp api - match >= 60%
+                # Verify fetch desc on medcomp api - match >= 55%
                 # Else fetch ICD Code based on desc on dump - match >= 80%
                 icd_key, icd_value, icd_key_list = None, None, []
                 icd_key, icd_value, icd_key_list = get_icd_medcomp(parsed_icd_desc[i])

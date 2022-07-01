@@ -64,6 +64,9 @@ class Checkups:
 
     def icd_group_validation(self):
         if self.finaljson['icd_code_group']:
+            self.finaljson["icd_code_group"] = sorted(
+                self.finaljson["icd_code_group"], key=lambda d : d['Score'] , reverse= True
+            )
             logger.warning(f' multiple icd codes matched', extra={'foo': 'Prime Checks'})
             self.error = True
             self.fallouts.append(f'multiple icd codes matched  {self.finaljson["icd_code_group"]}')
