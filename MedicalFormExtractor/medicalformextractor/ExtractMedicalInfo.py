@@ -7,7 +7,9 @@ Created on Fri Jun 17 10:46:50 2022
 import re
 import yaml
 import json
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 class ExtractMedicalInfo(object):
 
@@ -1036,7 +1038,7 @@ class ExtractMedicalInfo(object):
 
     def loadYamlConfig(self):
 
-        with open('config.yml') as file:
+        with open(f"{os.environ.get('CONFIG_FILES', os.curdir)}/config.yml") as file:
             try:
                 conf = yaml.safe_load(file)   
                 
