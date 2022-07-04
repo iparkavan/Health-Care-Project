@@ -4,6 +4,13 @@ import urllib.parse
 import boto3
 import fitz
 from pathlib import Path
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+from utils.utils import update_configuration_files
+update_configuration_files()
+
+
 from entities_analysis.checks import Checkups
 from data_ingestion.data_ingest import insert_records
 from data_ingestion.process_log import DataLog
@@ -11,10 +18,7 @@ from medicalformextractor.Extract import Extract
 from medicalformextractor.ExtractMedicalInfo import ExtractMedicalInfo
 from entities_analysis.transformations import MedTransformation
 from pprint import pprint
-import logging
 from datetime import datetime
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 s3 = boto3.resource('s3')
 textract = boto3.client("textract", region_name='us-east-1')
