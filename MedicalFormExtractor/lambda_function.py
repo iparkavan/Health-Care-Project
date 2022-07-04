@@ -4,22 +4,26 @@ import urllib.parse
 import boto3
 import fitz
 from pathlib import Path
+from pprint import pprint
+from datetime import datetime
 import logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
 from utils.utils import update_configuration_files
 update_configuration_files()
 
-
 from entities_analysis.checks import Checkups
+from entities_analysis.transformations import MedTransformation
+
 from data_ingestion.data_ingest import insert_records
 from data_ingestion.process_log import DataLog
+
 from medicalformextractor.Extract import Extract
 from medicalformextractor.ExtractMedicalInfo import ExtractMedicalInfo
-from entities_analysis.transformations import MedTransformation
-from pprint import pprint
-from datetime import datetime
 
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 s3 = boto3.resource('s3')
 textract = boto3.client("textract", region_name='us-east-1')
 s3_cli = boto3.client('s3')
@@ -112,6 +116,7 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         data_log.update_record()
 
 def lambda_handler(event, context):
+    request_id = context.aws_request_id
     # Get the object from the event and show its content type
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')

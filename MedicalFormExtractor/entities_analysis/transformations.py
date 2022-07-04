@@ -1,11 +1,14 @@
 import json
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 from entities_analysis.xml_parse import ICD
 from entities_analysis.icd_analyzer import ICDMatcher
 from entities_analysis.icd_transform import ICDTransform
 from entities_analysis.medcomp import get_icd_medcomp, check_medcomp
 
-
+data_folder = f"{os.environ.get('CONFIG_FILES', os.curdir)}"
 class MedTransformation:
 
     def __init__(self):
@@ -42,7 +45,7 @@ class MedTransformation:
         self._icd_code_list = [code for code in self._icd_code_list if code is not None]
         self._icd_desc_list = [desc for desc in self._icd_desc_list if desc is not None]
 
-        with open('MedInfoMapping.json', 'r') as jf:
+        with open(f"{data_folder}/MedInfoMapping.json", 'r') as jf:
             med_load_data = json.load(jf)
         med_json_map = med_load_data["MedInfoJsonMap"]
         for key, value in med_json_map.items():
@@ -52,7 +55,7 @@ class MedTransformation:
             self.medInfoJson[key] = getattr(self, value)
 
         try:
-            with open('icd_dump.json', 'r') as icd_file_read:
+            with open(f"{data_folder}/icd_dump.json", 'r') as icd_file_read:
                 icd_dict = json.load(icd_file_read)
             new_icd_dict = {}
 
@@ -65,7 +68,7 @@ class MedTransformation:
                             }
                         }
                         icd_dict.update(new_icd_dict)
-                        with open('icd_dump.json', 'w') as icd_file_write:
+                        with open(f"{data_folder}/icd_dump.json", 'w') as icd_file_write:
                             json.dump(icd_dict, icd_file_write, indent=4)
             for i in range(len(self._icd_code_group)):
                 if self._icd_code_group[i]:
@@ -77,7 +80,7 @@ class MedTransformation:
                                 }
                             }
                             icd_dict.update(new_icd_dict)
-                    with open('icd_dump.json', 'w') as icd_file_write:
+                    with open(f"{data_folder}/icd_dump.json", 'w') as icd_file_write:
                         json.dump(icd_dict, icd_file_write, indent=4)
         except Exception:
             pass

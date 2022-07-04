@@ -1,6 +1,8 @@
 import json
 from rapidfuzz import fuzz
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 class ICDMatcher:
 
@@ -23,7 +25,7 @@ class ICDMatcher:
         return new_icd_list
 
     def get_icd_data_fuzz(self):
-        with open('icd10_desc.json', 'r') as icd_file:
+        with open(f"{os.environ.get('CONFIG_FILES', os.curdir)}/icd10_desc.json", 'r') as icd_file:
             icd_dict_data_1 = json.load(icd_file)
             for key, val in icd_dict_data_1.items():
                 similarity = fuzz.partial_ratio(self._data, val[1])
@@ -36,7 +38,7 @@ class ICDMatcher:
                         'Score': similarity,
                         'Mode': 'data'
                     })
-        with open('icd_dump.json', 'r') as icd_file:
+        with open(f"{os.environ.get('CONFIG_FILES', os.curdir)}/icd_dump.json", 'r') as icd_file:
             icd_dict_data_2 = json.load(icd_file)
             for key, val in icd_dict_data_2.items():
                 similarity = fuzz.partial_ratio(self._data, val['desc'])
