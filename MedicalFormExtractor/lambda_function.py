@@ -99,11 +99,11 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         finaljson = checks.prime_checks(finalMedJson)
         pprint(finaljson)
         #Data Ingestion
-        response = insert_records([finalMedJson], "MedicalInfoExtractData")
+        response = insert_records([finaljson], "MedicalInfoExtractData")
         print(" response of Insertion", response)
         # Save the json to S3 bucket
         response_key = f"extracted_info/{file_name.stem}_info.json"
-        s3_cli.put_object(Body=json.dumps(finalMedJson), Bucket=bucket, Key=response_key)
+        s3_cli.put_object(Body=json.dumps(finaljson), Bucket=bucket, Key=response_key)
 
         print(f"Completed extracting the data ...")
     except Exception as e:
