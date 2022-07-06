@@ -164,4 +164,5 @@ class MedTransformation:
             icd_key, icd_value, icd_key_list = get_icd_medcomp(self._icd_info)
             self._icd_code_list = [icd_key]
             self._icd_desc_list = [icd_value]
-            self._icd_code_group = icd_key_list
+            if icd_key_list:
+                self._icd_code_group = icd_key_list
