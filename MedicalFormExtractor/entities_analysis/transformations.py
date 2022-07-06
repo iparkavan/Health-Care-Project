@@ -114,9 +114,6 @@ class MedTransformation:
         parsed_icd_code = extractInfo._icdCode
         parsed_icd_desc = extractInfo._icdDesc
         self._icd_info = extractInfo._icdInfo
-        self._icd_info = 'Atrophy of salivary gland'
-        parsed_icd_code = [None]
-        parsed_icd_desc = [None]
         
         for i in range(len(parsed_icd_code)):
             self._icd_code = None
