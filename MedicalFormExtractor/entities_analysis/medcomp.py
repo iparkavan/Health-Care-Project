@@ -57,7 +57,8 @@ def get_icd_medcomp(text):
 
 #@staticmethod
 def check_medcomp(response, code):
-    for val in response:
-        if val['Code'] == code:
-            return val['Code'], val['Description'], None
+    if response:
+        for val in response:
+            if val['Code'] == code:
+                return val['Code'], val['Description'], None
     return None, None, response

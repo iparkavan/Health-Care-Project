@@ -35,6 +35,8 @@ keywords:
         icd:
               - icd 
               - diagnosis & code
+        speciality:
+              - speciality
               
               
     tableinformation:
@@ -208,10 +210,13 @@ keywords:
               
         description:
                - description 
-               - diagnosis
         referralReason:
                -  reason
                
         icdInfo:
                - ~name & ~address & ~mrn & ~dob & ~birth & ~male & ~female & ~physician & ~date & ~$on & ~phone & ~mobile & ~contact & ~number & ~information & ~address & ~city & ~state & ~zip & ~fax
+               
+        specialityInfo:
+               - cardiology
+               
 

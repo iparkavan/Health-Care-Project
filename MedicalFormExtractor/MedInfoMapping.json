@@ -1,6 +1,9 @@
 {
     "MedInfoJsonMap": {
         "patient_name": "_patientName",
+        "patient_first_name": "_patientFirstName",
+        "patient_middle_name": "_patientMiddleName",
+        "patient_last_name": "_patientLastName",
         "patient_dob": "_patientDOB",
         "patient_mrn": "_patientMRN",
         "patient_gender": "_patientGender",
@@ -25,7 +28,8 @@
         "ref_by_phone": "_refByPhone",
         "ref_by_fax": "_refByFax",
         "ref_reason": "_refReason",
-        "primary_billing_diagnosis": "_diagnosis"
+        "primary_billing_diagnosis": "_diagnosis",
+        "speciality": "_speciality"
     },
     "ICDInfoJsonMap": {
         "icd_code": "_icd_code_list",

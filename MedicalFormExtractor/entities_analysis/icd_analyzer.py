@@ -60,7 +60,8 @@ class ICDMatcher:
 
     @staticmethod
     def check_datadump(response, code):
-        for val in response:
-            if val['Name'] == code:
-                return val['Name'], val['Description'], None
+        if response:
+            for val in response:
+                if val['Name'] == code:
+                    return val['Name'], val['Description'], None
         return None, None, response

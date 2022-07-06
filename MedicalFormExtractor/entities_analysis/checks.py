@@ -30,8 +30,9 @@ class Checkups:
     def mobileno_validation(self):
         column_keys = ['patient_phone', 'ref_to_phone', 'ref_by_phone']
         for key in column_keys:
-            if self.finaljson[key] is not None:
-                if re.match("^\\+?[1-9][0-9]{8,14}$", str(self.finaljson[key])):
+            number = ''.join(filter(str.isdigit, str(self.finaljson[key])))
+            if number:
+                if 8 >= (len(number) <= 12):
                     logger.info(f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
                 else:
                     self.error = True
@@ -54,7 +55,7 @@ class Checkups:
         column_keys = ['patient_name', 'ref_to_name', 'ref_by_name']
         for key in column_keys:
             if self.finaljson[key] is not None and len(self.finaljson[key]) > 0:
-                if re.match('[\s\w]+$', str(self.finaljson[key])):
+                if re.match('[\.,\s\w]+$', str(self.finaljson[key])):
                     logger.info(
                         f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
                 else:
@@ -64,9 +65,12 @@ class Checkups:
 
     def icd_group_validation(self):
         if self.finaljson['icd_code_group']:
-            self.finaljson["icd_code_group"] = sorted(
-                self.finaljson["icd_code_group"], key=lambda d : d['Score'] , reverse= True
-            )
+            try:
+                self.finaljson["icd_code_group"] = sorted(
+                    self.finaljson["icd_code_group"], key=lambda d : d['Score'] , reverse= True
+                )
+            except:
+                pass
             logger.warning(f' multiple icd codes matched', extra={'foo': 'Prime Checks'})
             self.error = True
             self.fallouts.append(f'multiple icd codes matched  {self.finaljson["icd_code_group"]}')
