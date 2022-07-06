@@ -124,12 +124,12 @@ class MedTransformation:
                 self.extract_icd(parsed_icd_code[i])
                 
             if parsed_icd_desc[i] and not parsed_icd_code[i]:
-                # ICD Desc is given and No ICD Code - Match >= 60%
+                # ICD Desc is given and No ICD Code - Match >= 40%
                 icd_key, icd_value, icd_key_list = None, None, []
                 myobj = ICDMatcher(parsed_icd_desc[i])
                 icd_key, icd_value, icd_key_list = get_icd_medcomp(parsed_icd_desc[i])
                 if not icd_key and not icd_key_list:
-                    # ICD Desc is given and No ICD Code - Match >= 80%
+                    # ICD Desc is given and No ICD Code - Match >= 70%
                     icd_key, icd_value, icd_key_list = myobj.get_icd_data_fuzz()
                 self._icd_code = icd_key
                 self._icd_desc = icd_value
@@ -137,8 +137,8 @@ class MedTransformation:
 
             if parsed_icd_desc[i] and parsed_icd_code[i]:
                 # ICD Code is given and ICD desc is given
-                # Verify fetch desc on medcomp api - match >= 55%
-                # Else fetch ICD Code based on desc on dump - match >= 80%
+                # Verify fetch desc on medcomp api - match >= 40%
+                # Else fetch ICD Code based on desc on dump - match >= 70%
                 icd_key, icd_value, icd_key_list = None, None, []
                 icd_key, icd_value, icd_key_list = get_icd_medcomp(parsed_icd_desc[i])
                 icd_key, icd_value, icd_key_list = check_medcomp(icd_key_list, parsed_icd_code[i])
@@ -160,7 +160,7 @@ class MedTransformation:
 
         if not any(parsed_icd_desc) and not any(parsed_icd_code):
             # NO ICD Code is given and ICD No desc is given
-            # Fetch ICD Code based on data from extract - match >= 65%
+            # Fetch ICD Code based on data from extract - match >= 40%
             icd_key, icd_value, icd_key_list = get_icd_medcomp(self._icd_info)
             self._icd_code_list = [icd_key]
             self._icd_desc_list = [icd_value]

@@ -10,7 +10,7 @@ class ICDMatcher:
         self._data = data
         self._key = None
         self._icd_desc = None
-        self._max_match = 80
+        self._max_match = 70
         self._key_list = []
 
     def remove_duplicates(self):

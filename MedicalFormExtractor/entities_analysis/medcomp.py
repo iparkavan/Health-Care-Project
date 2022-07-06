@@ -42,14 +42,14 @@ def get_icd_medcomp(text):
     except Exception:
         pass
     if len(icd_avg_response) == 1:
-        if icd_avg_response[0]['Score'] >= 0.55:
+        if icd_avg_response[0]['Score'] >= 40:
             code = icd_avg_response[0]['Code']
             desc = icd_avg_response[0]['Description']
             return code, desc, None
     elif len(icd_avg_response) > 1:
         code_list = []
         for val in icd_avg_response:
-            if val['Score'] >= 0.55:
+            if val['Score'] >= 40:
                 code_list.append(val)
         return None, None, code_list
     return None, None, None
