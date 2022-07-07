@@ -69,6 +69,8 @@ class Checkups:
                 self.finaljson["icd_code_group"] = sorted(
                     self.finaljson["icd_code_group"], key=lambda d : d['Score'] , reverse= True
                 )
+                for i in self.finaljson["icd_code_group"]:
+                    i['Score'] = round(i['Score'] , 2)                   
             except:
                 pass
             logger.warning(f' multiple icd codes matched', extra={'foo': 'Prime Checks'})
