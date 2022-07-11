@@ -1,5 +1,6 @@
 import json
 from dotenv import load_dotenv
+from data_ingestion.data_ingest import get_dump_record, insert_dump_record, get_dump_record_all
 import os
 load_dotenv()
 
@@ -26,13 +27,6 @@ class MedTransformation:
         new_icd_list = []
         if self._icd_code_group:
             for val in self._icd_code_group:
-                if val.get('Name'):               
-                    if val['Name'] in icd_names:
-                        continue
-                    else:
-                        icd_names.append(val['Name'])
-                        new_icd_list.append(val)
-                    
                 if val.get('Code'):
                     if val['Code'] in icd_names:
                         continue
@@ -56,36 +50,29 @@ class MedTransformation:
             self.medInfoJson[key] = getattr(self, value)
 
         try:
-            with open(f"{data_folder}/icd_dump.json", 'r') as icd_file_read:
-                icd_dict = json.load(icd_file_read)
-            new_icd_dict = {}
-
+            all_icd_data = get_dump_record_all()
+            all_icd_keys = [key[0] for key in all_icd_data]
             for i in range(len(self._icd_code_list)):
                 if self._icd_code_list[i]:
-                    if self._icd_code_list[i] not in icd_dict.keys() and self._icd_desc_list[i]:
-                        new_icd_dict = {
-                            self._icd_code_list[i]: {
-                                "desc": self._icd_desc_list[i]
+                    if self._icd_code_list[i] not in all_icd_keys and self._icd_desc_list[i]:
+                        insert_dump_record(
+                            {
+                                    "Code": self._icd_code_list[i],
+                                    "Description": self._icd_desc_list[i]
                             }
-                        }
-                        icd_dict.update(new_icd_dict)
-                        with open(f"{data_folder}/icd_dump.json", 'w') as icd_file_write:
-                            json.dump(icd_dict, icd_file_write, indent=4)
+                        )
             for i in range(len(self._icd_code_group)):
                 if self._icd_code_group[i]:
-                    for val in self._icd_code_group[i]:
-                        if val['Code'] not in icd_dict.keys():
-                            new_icd_dict = {
-                                val['Code']: {
-                                    "desc": val['Description']
-                                }
+                    val = self._icd_code_group[i]
+                    if val['Code'] not in all_icd_keys:
+                        insert_dump_record(
+                            {
+                                    "Code": val['Code'],
+                                    "Description": val['Description']
                             }
-                            icd_dict.update(new_icd_dict)
-                    with open(f"{data_folder}/icd_dump.json", 'w') as icd_file_write:
-                        json.dump(icd_dict, icd_file_write, indent=4)
+                        )
         except Exception:
             pass
-
         return self.medInfoJson
     
     def extract_icd(self, parsed_icd_code):
@@ -94,14 +81,14 @@ class MedTransformation:
         if icdResponse.get('Response') == 'False':
             icdResponse = icdObj.run_api()
         if icdResponse.get('Response') == 'True':
-            self._icd_code = icdResponse.get('Name')
+            self._icd_code = icdResponse.get('Code')
             self._icd_desc = icdResponse.get('Description')
             self._icd_list = None
         if icdResponse.get('Response') == 'False' and icdObj._logger[0] == 'Invalid ICD code':
             icdObj2 = ICDTransform(parsed_icd_code)
             icdResponse2 = icdObj2.tranform_gen_icd()
             if icdResponse2 and icdResponse2.get('Response') == 'True' and len(icdResponse2.get('_icd_value_list')) == 1:
-                self._icd_code = icdResponse2.get('Name')
+                self._icd_code = icdResponse2.get('Code')
                 self._icd_desc = icdResponse2.get('Description')
                 self._icd_list = None
             elif icdResponse2 and icdResponse2.get('Response') == 'True' and len(icdResponse2.get('_icd_value_list')) > 1:
@@ -110,11 +97,11 @@ class MedTransformation:
                 self._icd_list = icdResponse2.get('_icd_value_list')
                          
     def run(self, extractInfo):
-
+        
         parsed_icd_code = extractInfo._icdCode
         parsed_icd_desc = extractInfo._icdDesc
         self._icd_info = extractInfo._icdInfo
-        
+
         for i in range(len(parsed_icd_code)):
             self._icd_code = None
             self._icd_desc = None
@@ -162,6 +149,9 @@ class MedTransformation:
             # NO ICD Code is given and ICD No desc is given
             # Fetch ICD Code based on data from extract - match >= 40%
             icd_key, icd_value, icd_key_list = get_icd_medcomp(self._icd_info)
+            if not icd_key_list:
+                myobj = ICDMatcher(self._icd_info)
+                icd_key, icd_value, icd_key_list = myobj.get_icd_data_fuzz()
             self._icd_code_list = [icd_key]
             self._icd_desc_list = [icd_value]
             if icd_key_list:

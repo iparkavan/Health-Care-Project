@@ -4,10 +4,7 @@ region = "us-east-1"
 
 
 client = boto3.client('comprehendmedical',
-                      region_name=region,
-                      #aws_access_key_id="AKIAWOINZBSCR2Q6ZMLQ",
-                      #aws_secret_access_key="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"
-                      )
+                      region_name=region)
 
 
 
@@ -51,6 +48,7 @@ def get_icd_medcomp(text):
         for val in icd_avg_response:
             if val['Score'] >= 40:
                 code_list.append(val)
+            code_list = sorted(code_list, key=lambda d : d['Score'] , reverse= True)[:50]
         return None, None, code_list
     return None, None, None
 

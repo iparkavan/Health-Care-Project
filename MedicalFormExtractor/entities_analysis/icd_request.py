@@ -25,8 +25,9 @@ def extractapi(icd_val):
 
     if response.get('Response') == 'True':
         result['Response'] = 'True'
-        result['Name'] = response['Name']
+        result['Code'] = response['Name']
         result['Description'] = response['Description']
         result['Mode'] = 'api'
-        result['Details'] = response
+        if '.' not in result['Code'] and len(result['Code']) > 3:
+            result['Code'] = result['Code'][:3] + '.' + result['Code'][3:]
     return result
