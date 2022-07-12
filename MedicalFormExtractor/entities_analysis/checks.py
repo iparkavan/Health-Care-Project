@@ -19,9 +19,10 @@ class Checkups:
     def prime_checks(self, finaljson):
 
         self.finaljson = finaljson
+        self.name_validation()
+        self.dob_validation()
         self.mobileno_validation()
         self.zip_validation()
-        self.name_validation()
         self.icd_group_validation()
         self.finaljson['fallouts'] = self.fallouts
         del self.finaljson['icd_code_group']
@@ -31,19 +32,30 @@ class Checkups:
         column_keys = ['patient_phone', 'ref_to_phone', 'ref_by_phone']
         for key in column_keys:
             number = ''.join(filter(str.isdigit, str(self.finaljson[key])))
-            if number:
-                if 8 >= (len(number) <= 12):
-                    logger.info(f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
-                else:
-                    self.error = True
-                    self.fallouts.append(f'{key} validation failed ')
-                    logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
+            if number and 8 >= (len(number) <= 12) and re.match('^[\\d ()+-]+$', str(self.finaljson[key])):
+                logger.info(f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
+            else:
+                self.error = True
+                self.fallouts.append(f'{key} validation failed ')
+                logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
 
     def zip_validation(self):
         column_keys = ['patient_st_zip', 'ref_to_st_zip', 'ref_by_st_zip']
         for key in column_keys:
             if self.finaljson[key] is not None:
-                if re.match("^[0-9]{5}(?:-[0-9]{4})?$", str(self.finaljson[key])):
+                if re.match('^[\\d]{5}(?:-[\\d]{0,})?$', str(self.finaljson[key])):
+                    logger.info(
+                        f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
+                else:
+                    self.fallouts.append(f'{key} validation failed ')
+                    logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
+                    self.error = True
+
+    def dob_validation(self):
+        column_keys = ['patient_dob']
+        for key in column_keys:
+            if self.finaljson[key] is not None:
+                if re.match('^[\\d]{1,2}[/-][\\d]{1,2}[/-](?:\d{4}|\d{2})$', str(self.finaljson[key])):
                     logger.info(
                         f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
                 else:
@@ -55,7 +67,7 @@ class Checkups:
         column_keys = ['patient_name', 'ref_to_name', 'ref_by_name']
         for key in column_keys:
             if self.finaljson[key] is not None and len(self.finaljson[key]) > 0:
-                if re.match('[\.,\s\w]+$', str(self.finaljson[key])):
+                if re.match("^[a-zA-Z ,.'-]+$", str(self.finaljson[key])):
                     logger.info(
                         f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
                 else:

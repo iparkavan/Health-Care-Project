@@ -49,7 +49,7 @@ def insert_dump_record(data):
             conn = engine.connect()
             conn.execute(query)
             conn.close()
-            print(f"""New ICD info added: Code:'{data["Code"]}', Descrition:'{data["Description"]}')""")
+            logger.info(f"""New ICD info added: Code:'{data["Code"]}', Descrition:'{data["Description"]}')""")
         except:
-            print(f"""Error!!! Not able to add ICD info: Code:'{data["Code"]}', Descrition:'{data["Description"]}')""")
+            logger.warning(f"""Error!!! Not able to add ICD info: Code:'{data["Code"]}', Descrition:'{data["Description"]}')""")
     return data
