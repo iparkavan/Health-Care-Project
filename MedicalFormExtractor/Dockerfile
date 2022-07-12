@@ -6,6 +6,7 @@ COPY lambda_function.py ${LAMBDA_TASK_ROOT}
 COPY entities_analysis ${LAMBDA_TASK_ROOT}/entities_analysis
 COPY medicalformextractor ${LAMBDA_TASK_ROOT}/medicalformextractor
 COPY data_ingestion ${LAMBDA_TASK_ROOT}/data_ingestion
+COPY utils ${LAMBDA_TASK_ROOT}/utils
 COPY *.json ${LAMBDA_TASK_ROOT}/
 COPY *.yml ${LAMBDA_TASK_ROOT}/
 COPY *.env ${LAMBDA_TASK_ROOT}/

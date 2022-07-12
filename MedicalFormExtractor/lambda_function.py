@@ -98,7 +98,13 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         checks = Checkups()
         finaljson = checks.prime_checks(finalMedJson)
         pprint(finaljson)
+        fallouts = finaljson.pop('fallouts')
+        data_log.follow_up_reason = f"{fallouts}"
+        data_log.update_record()
         #Data Ingestion
+        finaljson['request_id'] = request_id
+        finaljson['s3_path'] = f"s3://{bucket}/{key}"
+
         response = insert_records([finaljson], "MedicalInfoExtractData")
         print(" response of Insertion", response)
         # Save the json to S3 bucket

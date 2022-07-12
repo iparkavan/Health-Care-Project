@@ -19,7 +19,7 @@ build:
 repo-login:
 	aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $(ACCOUNT)
 
-publish: build repo-login tag-latest publish-latest ## Publish the `{version}` ans `latest` tagged containers to ECR
+publish: upload-config build repo-login tag-latest publish-latest ## Publish the `{version}` ans `latest` tagged containers to ECR
 
 
 tag-latest: ## Generate container `{version}` tag
@@ -33,6 +33,7 @@ upload-config:
 	aws s3 cp icd10cm_tabular_2023.xml s3://data-store-igs/config/icd10cm_tabular_2023.xml
 	aws s3 cp icd10_desc.json s3://data-store-igs/config/icd10_desc.json
 	aws s3 cp icd_dump.json s3://data-store-igs/config/icd_dump.json
+	aws s3 cp MedInfoMapping.json s3://data-store-igs/config/MedInfoMapping.json
 
 update-lambda:
 	SHA=$(docker images --no-trunc --quiet "${ACCOUNT}"/form_extractor:latest)
