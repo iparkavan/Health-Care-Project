@@ -1,11 +1,9 @@
-from lxml import etree
 from entities_analysis.icd_request import extractapi
 from data_ingestion.data_ingest import get_dump_record, insert_dump_record
-import json
 from dotenv import load_dotenv
 import os
+import re
 load_dotenv()
-tree = etree.parse(f"{os.environ.get('CONFIG_FILES', os.curdir)}/icd10cm_tabular_2023.xml")
 EXCLUDE_FIELDS = ['Name', 'Valid', 'Response']
 
 data_folder = f"{os.environ.get('CONFIG_FILES', os.curdir)}"
@@ -30,6 +28,10 @@ class ICD:
             self._logger.append("Invalid ICD code")
             return
         if '.' in self._icd_value and len(self._icd_value.split('.')[0]) > 3:
+            self._error = True
+            self._logger.append("Invalid ICD code")
+            return
+        if not re.match('^[a-zA-z]{1}[0-9]{2}(\.)?(?(1)([0-9]{1,3}|[0-9]{1,3}[a-zA-Z]{1}))$' , self._icd_value):
             self._error = True
             self._logger.append("Invalid ICD code")
             return

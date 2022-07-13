@@ -2,6 +2,7 @@ import json
 from dotenv import load_dotenv
 from data_ingestion.data_ingest import get_dump_record, insert_dump_record, get_dump_record_all
 import os
+import re
 load_dotenv()
 
 from entities_analysis.xml_parse import ICD
@@ -106,6 +107,12 @@ class MedTransformation:
             self._icd_code = None
             self._icd_desc = None
             self._icd_list = []
+
+            if re.match('^[a-zA-z]{1}[0-9]{2}(\.)?(?(1)([0-9]{1,3}|[0-9]{1,3}[a-zA-Z]{1}))$' , parsed_icd_code[i].strip()) \
+                    and parsed_icd_code[i].strip() == parsed_icd_desc[i].strip():
+                parsed_icd_code[i] = parsed_icd_code[i].strip()
+                parsed_icd_desc[i] = None
+                                
             if not parsed_icd_desc[i] and parsed_icd_code[i]:          
                 # ICD Code is given/invalid and No ICD desc
                 self.extract_icd(parsed_icd_code[i])
