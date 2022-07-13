@@ -1347,11 +1347,11 @@ class ExtractMedicalInfo(object):
         if len(self._icdCode) > len(self._icdDesc):
             diff = len(self._icdCode) - len(self._icdDesc)
             for i in range(diff):
-                self._icdDesc.append("None")
+                self._icdDesc.append(None)
         if len(self._icdDesc) > len(self._icdCode):
             diff =  len(self._icdDesc) - len(self._icdCode)
             for i in range(diff):
-                self._icdCode.append("None")
+                self._icdCode.append(None)
         
         
         if not self._speciality :
