@@ -12,25 +12,62 @@ import os
 load_dotenv()
 
 
-from MedicalInfoVariableClass import MedicalInfoVariableClass
-
-class ExtractMedicalInfo(MedicalInfoVariableClass):
+class ExtractMedicalInfo():
 
    
 
-    def __init__(self, keyValuePairs , tableContents , lineContents):
+    def __init__(self):
         
-        super().__init__()
-        self._keyValuePairs = keyValuePairs
-        self._tableContents = tableContents
-        self._lineContents = lineContents
-        self._controlStatement = {}
+        self._patientName = ""
+        self._patientFirstName = None
+        self._patientMiddleName = None
+        self._patientLastName = None
+        self._patientDOB = None
+        self._patientMRN = None
+        self._patientGender = None
+        
+        self._patientAddress = None
+        self._patientPhone = None
+        self._patientCity = None
+        self._patientStZip = None
+        self._patientState = None
+        
+        self._refToName = ""
+        self._refToDate = None
+        self._refToAddress = None
+        self._refToCity = None
+        self._refToPhone = None
+        self._refToFax = None 
+        self._refToStZip = None
+        self._refToState = None
+
+        self._refByName = ""
+        self._refByAddress = None
+        self._refByCity = None
+        self._refByStZip = None
+        self._refByPhone = None
+        self._refByFax = None
+        self._refByState = None
+         
+        self._refReason = None
+        self._diagnosis = None
+        self._icdCode = None 
+        self._icdInfo = None
+        self._icdDesc = None
+        self._speciality = None
+
+        
+
         
 
         
         
-    def extract(self):
+    def extract(self,keyValuePairs, tableContents, lineContents):
         
+        self._keyValuePairs = keyValuePairs
+        self._tableContents = tableContents
+        self._lineContents = lineContents
+        self._controlStatement = {}        
         
         self.loadYamlConfig()
               
