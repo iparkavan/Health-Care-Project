@@ -23,10 +23,11 @@ def get_dump_record(icd_code):
     try:
         query = f"""select * from public.icd_dump where code = '{icd_code}'"""
         result = engine.execute(query).fetchone()
+        logger.info(f"Response from db: {result}")
         if result:
             return result[1]
     except:
-        pass
+        logger.error(f"Unable to run select query on the icd table", exc_info=True)
     return result
 
 def get_dump_record_all():
@@ -37,7 +38,7 @@ def get_dump_record_all():
         if result:
             return result
     except:
-        pass
+        logger.error(f"Unable to run select query on the icd table", exc_info=True)
     return result
 
 def insert_dump_record(data):
