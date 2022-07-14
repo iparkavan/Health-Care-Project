@@ -20,6 +20,7 @@ keywords:
               - refer  & physician
         referreason:
               - refer & reason
+              - refer & $for
 
         diagnosis:
               - diagnosis 
@@ -38,6 +39,7 @@ keywords:
         speciality:
               - speciality
               - specialty
+              - specialist
               
               
     tableinformation:
@@ -219,5 +221,10 @@ keywords:
                
         specialityInfo:
                - cardiology
+        
+        diagnosischecklist:
+            - arrhythmias
+            - chest$pain
+            - coronary$artery$disease
                
 
