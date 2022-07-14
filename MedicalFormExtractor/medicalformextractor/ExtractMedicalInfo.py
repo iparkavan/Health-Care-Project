@@ -1272,7 +1272,13 @@ class ExtractMedicalInfo(object):
     
     def extractCityZipIcdInfo(self):
         
-        
+        if not self._diagnosis:
+            for content in self._keyValuePairs :
+                if eval(self.generateIfCond(self._controlStatement.get("diagnosischecklist"),'content[0].lower()' )):                    
+                    if content[1].lower().strip() == "x":
+                        if not self._diagnosis:
+                           self._diagnosis = content[0]   
+                        
         self.removeLeadingTrailingSpaces()
 
         self._icdDesc = self._diagnosis
