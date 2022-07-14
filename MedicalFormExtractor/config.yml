@@ -20,6 +20,7 @@ keywords:
               - refer  & physician
         referreason:
               - refer & reason
+              - refer & $for
 
         diagnosis:
               - diagnosis 
@@ -37,6 +38,8 @@ keywords:
               - diagnosis & code
         speciality:
               - speciality
+              - specialty
+              - specialist
               
               
     tableinformation:
@@ -142,7 +145,9 @@ keywords:
               - refer & name 
               - refer & physician 
               - refer & detail
-              - referring & provider              
+              - referring & provider 
+              - physician & information     
+              - referral$to
               
         referToNameInLine:
               - name 
@@ -212,11 +217,18 @@ keywords:
                - description 
         referralReason:
                -  reason
+               - symptoms & $addressed
                
         icdInfo:
                - ~name & ~address & ~mrn & ~dob & ~birth & ~male & ~female & ~physician & ~date & ~$on & ~phone & ~mobile & ~contact & ~number & ~information & ~address & ~city & ~state & ~zip & ~fax
                
         specialityInfo:
                - cardiology
+               - neurology
+        
+        diagnosischecklist:
+            - arrhythmias
+            - chest$pain
+            - coronary$artery$disease
                
 
