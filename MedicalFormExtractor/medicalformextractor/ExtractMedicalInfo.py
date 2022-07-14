@@ -648,7 +648,7 @@ class ExtractMedicalInfo(object):
                 left = round(line[1][3],2)  
                 width = round(line[1][0],2)                   
                 height = height + top                
-                height = height + 0.30
+                height = height + 0.20
                 width = width + left
                 width = width + 0.10
                 left = left - 0.10
@@ -826,7 +826,7 @@ class ExtractMedicalInfo(object):
                 left = round(line[1][3],2)  
                 width = round(line[1][0],2)                   
                 height = height + top                
-                height = height + 0.30
+                height = height + 0.20
                 width = width + left
                 width = width + 0.10
                 left = left - 0.10
