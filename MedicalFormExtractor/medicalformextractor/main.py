@@ -16,6 +16,7 @@ from PIL import Image, ImageDraw
 
 from Extract import Extract
 from ExtractMedicalInfo import ExtractMedicalInfo
+from MedicalInfoVariableClass import MedicalInfoVariableClass
 
 bucket = "textract-console-ap-south-1-13d8bdf3-2ddb-471a-a8ca-3ea2325bd65"
 document = "med1.jpg"
@@ -40,6 +41,7 @@ def getResponse(client):
 def run():
     
     print("** Inside main run method ***")
+    MedicalInfoVariableClass()
     client = getS3Client()
     response = getResponse(client)
     
