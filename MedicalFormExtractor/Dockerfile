@@ -10,7 +10,7 @@ COPY utils ${LAMBDA_TASK_ROOT}/utils
 COPY *.json ${LAMBDA_TASK_ROOT}/
 COPY *.yml ${LAMBDA_TASK_ROOT}/
 COPY *.env ${LAMBDA_TASK_ROOT}/
-COPY *.xml ${LAMBDA_TASK_ROOT}/
+#COPY *.xml ${LAMBDA_TASK_ROOT}/
 # Install the function's dependencies using file requirements.txt
 # from your project folder.
 
