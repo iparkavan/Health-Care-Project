@@ -46,7 +46,7 @@ class ExtractMedicalInfo(MedicalInfoVariableClass):
         
         self.extractCityZipIcdInfo()
         
-        jsonMessage = self.generateJsonMessage()
+        #jsonMessage = self.generateJsonMessage()
         
         self.removeLeadingTrailingSpaces()
         
@@ -87,7 +87,7 @@ class ExtractMedicalInfo(MedicalInfoVariableClass):
               "icd info" ,  self._icdInfo, '\n',
               "speciality : " , self._speciality)
         
-        return jsonMessage
+        #return jsonMessage
 
         
     def extractInfoFromTable(self):
