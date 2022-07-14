@@ -31,13 +31,14 @@ class Checkups:
     def mobileno_validation(self):
         column_keys = ['patient_phone', 'ref_to_phone', 'ref_by_phone']
         for key in column_keys:
-            number = ''.join(filter(str.isdigit, str(self.finaljson[key])))
-            if number and 8 >= (len(number) <= 12) and re.match('^[\\d ()+-]+$', str(self.finaljson[key])):
-                logger.info(f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
-            else:
-                self.error = True
-                self.fallouts.append(f'{key} validation failed ')
-                logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
+            if self.finaljson[key] is not None:
+                number = ''.join(filter(str.isdigit, str(self.finaljson[key])))
+                if number and 8 >= (len(number) <= 12) and re.match('^[\\d ()+-]+$', str(self.finaljson[key])):
+                    logger.info(f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
+                else:
+                    self.error = True
+                    self.fallouts.append(f'{key} validation failed ')
+                    logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
 
     def zip_validation(self):
         column_keys = ['patient_st_zip', 'ref_to_st_zip', 'ref_by_st_zip']
@@ -64,9 +65,9 @@ class Checkups:
                     self.error = True
 
     def name_validation(self):
-        column_keys = ['patient_name', 'ref_to_name', 'ref_by_name']
+        column_keys = ['ref_to_name', 'ref_by_name']
         for key in column_keys:
-            if self.finaljson[key] is not None and len(self.finaljson[key]) > 0:
+            if len(self.finaljson[key].strip()) > 0:
                 if re.match("^[a-zA-Z ,.'-]+$", str(self.finaljson[key])):
                     logger.info(
                         f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
@@ -74,6 +75,34 @@ class Checkups:
                     self.error = True
                     self.fallouts.append(f'{key} validation failed ')
                     logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
+                    
+        name_keys = ['patient_first_name','patient_middle_name','patient_last_name']
+        for key in name_keys:
+            if self.finaljson[key] is not None:
+                if re.match("^[a-zA-Z ,.'-]+$", str(self.finaljson[key])):
+                    logger.info(
+                        f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
+                else:
+                    self.error = True
+                    self.fallouts.append(f'{key} validation failed ')
+                    logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
+                    
+        compulsory_keys = ['patient_name']
+        for key in compulsory_keys:
+            if len(self.finaljson[key].strip()) > 0:
+                if re.match("^[a-zA-Z ,.'-]+$", str(self.finaljson[key])):
+                    logger.info(
+                        f'{key} validation succesfull', extra={'foo': 'Prime Checks'})
+                else:
+                    self.error = True
+                    self.fallouts.append(f'{key} validation failed ')
+                    logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
+                    
+            if len(self.finaljson[key].strip()) == 0:
+                self.error = True
+                self.fallouts.append(f'{key} validation failed ')
+                logger.warning(f'{key} validation failed ', extra={'foo': 'Prime Checks'})
+                    
 
     def icd_group_validation(self):
         if self.finaljson['icd_code_group']:
