@@ -16,7 +16,7 @@ class Extract(object):
     def extractContent(self):
         
         content = self.getContent()
-        keyValuePairs = self.getKeyValuePair(content)
+        keyValuePairs = self.getKeyValuePair(self._response)
         tableContents = self.getTableContent(content)
         lineContents = self.getLineContent(content)
         
@@ -37,12 +37,13 @@ class Extract(object):
 
 
     def get_kv_map(self, content):
-        for block in content.blocks:
-            blocks = block['Blocks']
+        key_map = {}
+        value_map = {}
+        block_map = {}
+        for page in content:
+            blocks = page['Blocks']
             # get key and value maps
-            key_map = {}
-            value_map = {}
-            block_map = {}
+
             for block in blocks:
                 block_id = block['Id']
                 block_map[block_id] = block
