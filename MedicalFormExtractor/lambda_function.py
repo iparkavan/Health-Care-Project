@@ -80,12 +80,14 @@ def process_file(bucket, key, request_id, data_log: DataLog):
 
         data_log.transformation_start = datetime.utcnow()
         data_log.update_record()
-        
-        extract = Extract(all_pages_responses)
-        keyValuePairs, tableContents, lineContents = extract.extractContent()
-        extractMedicalInfo = ExtractMedicalInfo(keyValuePairs, tableContents, lineContents)
-        extractMedicalInfo.extract()
-        logger.info(f"Extracted first level of information")
+        extractMedicalInfo = ExtractMedicalInfo()
+        for i, page in enumerate(all_pages_responses):
+            logger.info(f"Extracting first level of information from page {i}")
+            extract = Extract(all_pages_responses)
+            keyValuePairs, tableContents, lineContents = extract.extractContent()
+            extractMedicalInfo.extract(keyValuePairs , tableContents , lineContents)
+        extractMedicalInfo = extractMedicalInfo.generateJsonMessage()
+            
         # Fix ICD10 codes
         transformedInfo = MedTransformation()
         transformedInfo.run(extractMedicalInfo)
