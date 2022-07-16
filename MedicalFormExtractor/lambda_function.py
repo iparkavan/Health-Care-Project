@@ -80,14 +80,12 @@ def process_file(bucket, key, request_id, data_log: DataLog):
 
         data_log.transformation_start = datetime.utcnow()
         data_log.update_record()
-        extractMedicalInfo = ExtractMedicalInfo()
-        for i, page in enumerate(all_pages_responses):
-            logger.info(f"Extracting first level of information from page {i}")
-            extract = Extract(all_pages_responses)
-            keyValuePairs, tableContents, lineContents = extract.extractContent()
-            extractMedicalInfo.extract(keyValuePairs , tableContents , lineContents)
-        extractMedicalInfo = extractMedicalInfo.generateJsonMessage()
-            
+        
+        extract = Extract(all_pages_responses)
+        keyValuePairs, tableContents, lineContents = extract.extractContent()
+        extractMedicalInfo = ExtractMedicalInfo(keyValuePairs, tableContents, lineContents)
+        extractMedicalInfo.extract()
+        logger.info(f"Extracted first level of information")
         # Fix ICD10 codes
         transformedInfo = MedTransformation()
         transformedInfo.run(extractMedicalInfo)
@@ -100,13 +98,7 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         checks = Checkups()
         finaljson = checks.prime_checks(finalMedJson)
         pprint(finaljson)
-        fallouts = finaljson.pop('fallouts')
-        data_log.follow_up_reason = f"{fallouts}"
-        data_log.update_record()
         #Data Ingestion
-        finaljson['request_id'] = request_id
-        finaljson['s3_path'] = f"s3://{bucket}/{key}"
-
         response = insert_records([finaljson], "MedicalInfoExtractData")
         print(" response of Insertion", response)
         # Save the json to S3 bucket
