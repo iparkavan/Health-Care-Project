@@ -16,7 +16,7 @@ class Extract(object):
     def extractContent(self):
         
         content = self.getContent()
-        keyValuePairs = self.getKeyValuePair(content)
+        keyValuePairs = self.getKeyValuePair(self._response)
         tableContents = self.getTableContent(content)
         lineContents = self.getLineContent(content)
         
@@ -30,19 +30,22 @@ class Extract(object):
     
     
     def getKeyValuePair(self, content):
-        key_map, value_map, block_map = self.get_kv_map(content)
-        kvs = self.get_kv_relationship(key_map, value_map, block_map)
+        kvs = self.get_kv_map(content)
+        #kvs = self.get_kv_relationship(key_map, value_map, block_map)
         return kvs
 
 
 
     def get_kv_map(self, content):
-        for block in content.blocks:
-            blocks = block['Blocks']
-            # get key and value maps
+        kvcontent = []
+        i = 0
+        for page in content:
             key_map = {}
             value_map = {}
             block_map = {}
+            blocks = page['Blocks']
+            # get key and value maps
+
             for block in blocks:
                 block_id = block['Id']
                 block_map[block_id] = block
@@ -51,17 +54,19 @@ class Extract(object):
                         key_map[block_id] = block
                     else:
                         value_map[block_id] = block
-    
-        return key_map, value_map, block_map
+            keyValueContent = self.get_kv_relationship(key_map, value_map, block_map, i)
+            kvcontent.extend(keyValueContent)
+            i = i + 1
+        return kvcontent
 
 
 
-    def get_kv_relationship(self,key_map, value_map, block_map):
+    def get_kv_relationship(self,key_map, value_map, block_map, page):
         kvs = []
         for block_id, key_block in key_map.items():
             value_block = self.find_value_block(key_block, value_map)
-            key , width , height , top , left = self.get_text(key_block, block_map , "key")
-            val = self.get_text(value_block, block_map , "value")
+            key , width , height , top , left = self.get_text(key_block, block_map , "key", page)
+            val = self.get_text(value_block, block_map , "value", 0)
             kvs.append([key , val , width , height , top , left])
         return kvs
     
@@ -95,7 +100,7 @@ class Extract(object):
                 left = doc.pages[page].tables[tb].geometry.boundingBox.left.real
                 top = doc.pages[page].tables[tb].geometry.boundingBox.top.real
                 tblcntnt.append([index + '_'  + str(page) + '_' + str(tb),
-                                [width , height , top ,  left],
+                                [page + width , page + height , page + top ,  page + left],
                                 ttt])
             
         return tblcntnt
@@ -112,12 +117,15 @@ class Extract(object):
                 height = ((line.geometry.boundingBox.height.real))
                 top = ((line.geometry.boundingBox.top.real))
                 left = ((line.geometry.boundingBox.left.real))
-                
+                width = page + width
+                height = page + height
+                top = page + top
+                left = page + left
                 lineContent.append([line.text , [width , height , top , left]])
                 
         return lineContent
 
-    def get_text(self, result, blocks_map , extype ):
+    def get_text(self, result, blocks_map , extype , page ):
         text = ''
         width = ''
         height = ''
@@ -135,6 +143,11 @@ class Extract(object):
                             height = word['Geometry']['BoundingBox']['Height']
                             top = word['Geometry']['BoundingBox']['Top']
                             left = word['Geometry']['BoundingBox']['Left']
+                            
+                            width = page + width
+                            height = page + height
+                            top = page + top
+                            left = page + left
                         if word['BlockType'] == 'SELECTION_ELEMENT':
                             if word['SelectionStatus'] == 'SELECTED':
                                 text += 'X '

@@ -83,8 +83,8 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         
         extract = Extract(all_pages_responses)
         keyValuePairs, tableContents, lineContents = extract.extractContent()
-        extractMedicalInfo = ExtractMedicalInfo(keyValuePairs, tableContents, lineContents)
-        extractMedicalInfo.extract()
+        extractMedicalInfo = ExtractMedicalInfo()
+        extractMedicalInfo.extract(keyValuePairs, tableContents, lineContents)
         logger.info(f"Extracted first level of information")
         # Fix ICD10 codes
         transformedInfo = MedTransformation()
@@ -98,6 +98,12 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         checks = Checkups()
         finaljson = checks.prime_checks(finalMedJson)
         pprint(finaljson)
+        fallouts = finaljson.pop('fallouts')
+        data_log.follow_up_reason = f"{fallouts}"
+        data_log.update_record()
+        # Data Ingestion
+        finaljson['request_id'] = request_id
+        finaljson['s3_path'] = f"s3://{bucket}/{key}"
         #Data Ingestion
         response = insert_records([finaljson], "MedicalInfoExtractData")
         print(" response of Insertion", response)

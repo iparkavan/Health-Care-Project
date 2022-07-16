@@ -11,17 +11,12 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-class ExtractMedicalInfo(object):
+
+class ExtractMedicalInfo():
 
    
 
-    def __init__(self, keyValuePairs , tableContents , lineContents):
-        
-        self._keyValuePairs = keyValuePairs
-        self._tableContents = tableContents
-        self._lineContents = lineContents
-        self._controlStatement = {}
-        
+    def __init__(self):
         
         self._patientName = ""
         self._patientFirstName = None
@@ -59,11 +54,20 @@ class ExtractMedicalInfo(object):
         self._icdCode = None 
         self._icdInfo = None
         self._icdDesc = None
-        self._speciality = None
+        self._speciality = ""
+
+        
+
+        
+
         
         
-    def extract(self):
+    def extract(self,keyValuePairs, tableContents, lineContents):
         
+        self._keyValuePairs = keyValuePairs
+        self._tableContents = tableContents
+        self._lineContents = lineContents
+        self._controlStatement = {}        
         
         self.loadYamlConfig()
               
@@ -79,7 +83,7 @@ class ExtractMedicalInfo(object):
         
         self.extractCityZipIcdInfo()
         
-        jsonMessage = self.generateJsonMessage()
+        #jsonMessage = self.generateJsonMessage()
         
         self.removeLeadingTrailingSpaces()
         
@@ -120,7 +124,7 @@ class ExtractMedicalInfo(object):
               "icd info" ,  self._icdInfo, '\n',
               "speciality : " , self._speciality)
         
-        return jsonMessage
+        #return jsonMessage
 
         
     def extractInfoFromTable(self):

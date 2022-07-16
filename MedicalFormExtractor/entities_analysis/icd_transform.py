@@ -18,14 +18,16 @@ class ICDTransform:
         icd_names = []
         new_icd_list = []
         for val in self._icd_value_list:
-            if val['Name'] in icd_names:
+            if val['Code'] in icd_names:
                 continue
             else:
-                icd_names.append(val['Name'])
+                icd_names.append(val['Code'])
                 new_icd_list.append(val)
         return new_icd_list
 
     def tranform_gen_icd(self):
+        if not self._icd_value[0].isalnum():
+            self._icd_value = self._icd_value[1:]
         if not self._icd_value[0].isalpha() and '.' not in self._icd_value:
             if len(self._icd_value.split('.')[0]) < 3:
                 for letter in string.ascii_uppercase:
@@ -36,7 +38,7 @@ class ICDTransform:
                         icdResponse2 = icdObj2.run_api()
                     if icdResponse2.get('Response') == 'True':
                         self._icd_value_list.append({
-                            'Name': icdResponse2.get('Name'),
+                            'Code': icdResponse2.get('Code'),
                             'Description': icdResponse2.get('Description'),
                             'Mode': icdResponse2.get('Mode')
                         })
@@ -49,17 +51,16 @@ class ICDTransform:
                         icdResponse3 = icdObj3.run_api()
                     if icdResponse3.get('Response') == 'True':
                         self._icd_value_list.append({
-                            'Name': icdResponse3.get('Name'),
+                            'Code': icdResponse3.get('Code'),
                             'Description': icdResponse3.get('Description'),
                             'Mode': icdResponse3.get('Mode')
                         })
-
             if self._icd_value_list:
                 if len(self._icd_value_list) == 1:
                     return {
                         'Response': 'True',
                         '_icd_value_list': self._icd_value_list,
-                        'Name': self._icd_value_list[0]['Name'],
+                        'Code': self._icd_value_list[0]['Code'],
                         'Description': self._icd_value_list[0]['Description'],
                         'Mode': self._icd_value_list[0]['Mode']
                     }
@@ -80,7 +81,7 @@ class ICDTransform:
                         icdResponse2 = icdObj2.run_api()
                     if icdResponse2.get('Response') == 'True':
                         self._icd_value_list.append({
-                            'Name': icdResponse2.get('Name'),
+                            'Code': icdResponse2.get('Code'),
                             'Description': icdResponse2.get('Description'),
                             'Mode': icdResponse2.get('Mode')
                         })
@@ -93,7 +94,7 @@ class ICDTransform:
                         icdResponse3 = icdObj3.run_api()
                     if icdResponse3.get('Response') == 'True':
                         self._icd_value_list.append({
-                            'Name': icdResponse3.get('Name'),
+                            'Code': icdResponse3.get('Code'),
                             'Description': icdResponse3.get('Description'),
                             'Mode': icdResponse3.get('Mode')
                         })
@@ -103,7 +104,7 @@ class ICDTransform:
                     return {
                         'Response': 'True',
                         '_icd_value_list': self._icd_value_list,
-                        'Name': self._icd_value_list[0]['Name'],
+                        'Code': self._icd_value_list[0]['Code'],
                         'Description': self._icd_value_list[0]['Description'],
                         'Mode': self._icd_value_list[0]['Mode']
                     }
