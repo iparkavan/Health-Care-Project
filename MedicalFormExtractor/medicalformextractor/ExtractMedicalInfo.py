@@ -54,7 +54,7 @@ class ExtractMedicalInfo():
         self._icdCode = None 
         self._icdInfo = None
         self._icdDesc = None
-        self._speciality = None
+        self._speciality = ""
 
         
 
