@@ -83,8 +83,8 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         
         extract = Extract(all_pages_responses)
         keyValuePairs, tableContents, lineContents = extract.extractContent()
-        extractMedicalInfo = ExtractMedicalInfo(keyValuePairs, tableContents, lineContents)
-        extractMedicalInfo.extract()
+        extractMedicalInfo = ExtractMedicalInfo()
+        extractMedicalInfo.extract(keyValuePairs, tableContents, lineContents)
         logger.info(f"Extracted first level of information")
         # Fix ICD10 codes
         transformedInfo = MedTransformation()
