@@ -98,6 +98,9 @@ keywords:
               - $on
         referToFaxInTable:
               - fax
+              
+        reasonForReferalTable:
+              - referral & reason
 
 
     lineWiseinformation:

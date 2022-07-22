@@ -54,7 +54,7 @@ class ExtractMedicalInfo():
         self._icdCode = None 
         self._icdInfo = None
         self._icdDesc = None
-        self._speciality = ""
+        self._speciality = None
 
         
 
@@ -84,6 +84,9 @@ class ExtractMedicalInfo():
         self.extractCityZipIcdInfo()
         
         #jsonMessage = self.generateJsonMessage()
+        
+        if not self._refReason:
+            self.extractReferalReasonFromTable()
         
         self.removeLeadingTrailingSpaces()
         
@@ -1371,12 +1374,80 @@ class ExtractMedicalInfo():
 
 
                 specialityList = (self._controlStatement.get("specialityInfo")).split("or")
-                print(specialityList)
+                 
                 for speciality in specialityList:
                    
                     if speciality.strip() in line[0].lower().strip():
                         self._speciality = speciality
                         continue
-                            
+         
+        self._diagnosis = self._diagnosis.replace("&" , "")                  
         
+    def extractReferalReasonFromTable(self):
+        
+        referalReasonTable = False
+        top , height , tableName = None , None , None
+        for tableContent in self._tableContents :
+            if referalReasonTable :
+                continue 
+            
+            for content in tableContent[2]:
 
+                if eval(self.generateIfCond(self._controlStatement.get("reasonForReferalTable"),'content.lower()' )):
+                    
+                    Twidth = tableContent[1][0]
+                    Theight = tableContent[1][1]
+                    Ttop = tableContent[1][2]
+                    Tleft = tableContent[1][3]
+                    
+                    Twidth = round(Twidth,2)
+                    Theight = round(Theight,2)
+                    Ttop = round(Ttop,2)
+                    Tleft = round(Tleft,2)
+                    
+                    Theight = Theight + Ttop
+                    Twidth = Twidth + Tleft
+                            
+                    pateintInformationTable = True   
+                    
+                    #print(tableContent[2])
+                    
+                    for line in self._lineContents : 
+                        
+                        
+                        if round(line[1][2],2) >=  Ttop:
+                            if round(line[1][2],2) <= Theight :
+                                if round(line[1][3],2) >= Tleft :
+                                    if round(line[1][3],2) <= Twidth:
+                                        if eval(self.generateIfCond(self._controlStatement.get("reasonForReferalTable"),'line[0].lower()' )):
+                        
+                                            Lwidth = line[1][0]
+                                            Lheight = line[1][1]
+                                            Ltop = line[1][2]
+                                            Lleft = line[1][3]
+                                            
+                                            Lwidth = round(Lwidth,2)
+                                            Lheight = round(Lheight,2)
+                                            Ltop = round(Ltop,2)
+                                            Lleft = round(Lleft,2)
+                                            
+                                            Lheight = Lheight + Ltop
+                                            Lwidth = Lwidth + Lleft
+                    
+                    refLineFound = False
+                    refLineCount = 0
+                    if Lheight and Lwidth :
+                        for line in self._lineContents : 
+                            
+                            
+                            if round(line[1][2],2) >=  Ltop:
+                                if round(line[1][2],2) <= Theight :   
+                                    if round(line[1][3],2) >= Lleft :
+                                        if round(line[1][3],2) <= Lwidth:
+                                            if eval(self.generateIfCond(self._controlStatement.get("reasonForReferalTable"),'line[0].lower()' )):
+                                                refLineFound = True
+                                            if refLineFound:
+                                                refLineCount = refLineCount + 1
+                                            if refLineFound and refLineCount == 2:
+                                                refLineFound = False
+                                                self._refReason = line[0]
