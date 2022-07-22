@@ -1,5 +1,7 @@
 import boto3
 from rapidfuzz import fuzz
+
+from settings import COMPREHEND_THRESHOLD, MAX_RESULTS
 region = "us-east-1"
 
 
@@ -39,16 +41,16 @@ def get_icd_medcomp(text):
     except Exception:
         pass
     if len(icd_avg_response) == 1:
-        if icd_avg_response[0]['Score'] >= 40:
+        if icd_avg_response[0]['Score'] >= COMPREHEND_THRESHOLD:
             code = icd_avg_response[0]['Code']
             desc = icd_avg_response[0]['Description']
             return code, desc, None
     elif len(icd_avg_response) > 1:
         code_list = []
         for val in icd_avg_response:
-            if val['Score'] >= 40:
+            if val['Score'] >= COMPREHEND_THRESHOLD:
                 code_list.append(val)
-            code_list = sorted(code_list, key=lambda d : d['Score'] , reverse= True)[:50]
+            code_list = sorted(code_list, key=lambda d : d['Score'] , reverse= True)[:MAX_RESULTS]
         return None, None, code_list
     return None, None, None
 

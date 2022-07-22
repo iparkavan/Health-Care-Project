@@ -35,6 +35,7 @@
         "icd_code": "_icd_code_list",
         "icd_code_group": "_icd_code_group",
         "icd_desc": "_icd_desc_list",
-        "med_additional_info": "_icd_info"
+        "med_additional_info": "_icd_info",
+        "icd_db_results": "_icd_results"
     }
 }
