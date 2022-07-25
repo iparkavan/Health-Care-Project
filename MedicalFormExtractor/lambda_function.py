@@ -58,7 +58,6 @@ def ocr_pages(pdf, bucket, file_name):
     return all_pages_responses
 
 
-
 def process_file(bucket, key, request_id, data_log: DataLog):
     try:
         bucket_obj = s3.Bucket(bucket)
@@ -133,6 +132,18 @@ def lambda_handler(event, context):
     # Get the object from the event and show its content type
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    data_log = DataLog(request_uuid=request_id, uploaded_s3_path=f"s3://{bucket}/{key}", event_received=datetime.utcnow())
+    data_log.update_record()
+    process_file(bucket, key, request_id, data_log)
+    data_log.event_completed = datetime.utcnow()
+    data_log.update_record()
+
+
+if __name__ == "__main__":
+    from uuid import uuid4
+    request_id = f"{uuid4()}"
+    bucket = ""
+    key = ""
     data_log = DataLog(request_uuid=request_id, uploaded_s3_path=f"s3://{bucket}/{key}", event_received=datetime.utcnow())
     data_log.update_record()
     process_file(bucket, key, request_id, data_log)
