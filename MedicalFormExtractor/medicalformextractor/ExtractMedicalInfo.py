@@ -7,9 +7,9 @@ Created on Fri Jun 17 10:46:50 2022
 import re
 import yaml
 import json
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
-load_dotenv()
+#load_dotenv()
 
 
 class ExtractMedicalInfo():
@@ -173,7 +173,9 @@ class ExtractMedicalInfo():
                         self._patientGender = content[1]
             
             if eval(self.generateIfCond(self._controlStatement.get("refertotname"),'content[0].lower()' )):
-
+                if "to" in content[0].lower() and len(content[0].split(" ")) > 2 :
+                    
+                    continue
                 if content[1]:
                     if not self._refToName:
                         self._refToName = self._refToName + " " + content[1]
@@ -204,6 +206,8 @@ class ExtractMedicalInfo():
             
             if eval(self.generateIfCond(self._controlStatement.get("referbyname"),'content[0].lower()' )):     
             #if eval(self._controlStatement.get("referbyname")) in content[0].lower():
+                if "from" in content[0].lower() and len(content[0].split(" ")) > 2 :
+                    continue
                 if content[1]:
                     if not self._refByName:
                         self._refByName = self._refByName + " " + content[1]
@@ -259,7 +263,8 @@ class ExtractMedicalInfo():
                         if round(line[1][2],2) >= newTop:
                             if round(line[1][2],2) <= (round(top,2)) :
                                 if eval(self.generateIfCond(self._controlStatement.get("patienttable"),'line[0].lower()' )):                                   
-                                      
+                                    if len(line[0].split(" ")) > 5:
+                                        continue
                                     pateintInformationTable = True
                                     
                                     return top , height , tableContent[0]
@@ -295,7 +300,8 @@ class ExtractMedicalInfo():
                             if round(line[1][2],2) <= (round(top,2)) :
                                 
                                 if eval(self.generateIfCond(self._controlStatement.get("refertable"),'line[0].lower()' )):                                        
-                                     
+                                    if len(line[0].split(" ")) > 5:
+                                        continue                                     
                                     referalInformationTable = True
                                     
                                     return top , height , tableContent[0]
@@ -327,45 +333,50 @@ class ExtractMedicalInfo():
     def extractPatientContentInTable(self,patientContent):
         
         
-        if not self._patientName:
-            fname , mname , lname, name  = '' , '' , '' , ''
-            for info in patientContent :
-                if "name" in info[0].lower():
-                    info[1] = info[1].lstrip().rstrip()
-                    if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
-                        
-                        if "," in info[1]:
-                            nm = info[1].split(',')
-                        else :
-                            nm = info[1].split(' ')
-                        
+        #if not self._patientName:
+        fname , mname , lname, name  = '' , '' , '' , ''
+        for info in patientContent :
+            if "name" in info[0].lower():
+                info[1] = info[1].lstrip().rstrip()
+                if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
+                    
+                    if "," in info[1]:
+                        nm = info[1].split(',')
+                    else :
+                        nm = info[1].split(' ')
+                    if not self._patientFirstName:
                         self._patientFirstName = nm[0]
+                    if not self._patientLastName:
                         self._patientLastName = nm[-1]
-                        if len(nm) == 3 :
+                    if len(nm) == 3 :
+                        if not self._patientMiddleName:
                             self._patientMiddleName = nm[1]
-                            
-                    elif ("first" in info[0].lower()) and ("last"  in info[0].lower()):
-                        if "," in info[1]:
-                            nm = info[1].split(',')
-                        else :
-                            nm = info[1].split(' ')
+                        
+                elif ("first" in info[0].lower()) and ("last"  in info[0].lower()):
+                    if "," in info[1]:
+                        nm = info[1].split(',')
+                    else :
+                        nm = info[1].split(' ')
+                    if not self._patientFirstName:
                         self._patientFirstName = nm[0]
+                    if not self._patientLastName:
                         self._patientLastName = nm[-1]
 
-                    if "first" in info[0].lower() :
-                        fname = info[1]
-                        if not self._patientFirstName:
-                            self._patientFirstName = info[1]
-                    elif "middle" in info[0].lower() :
-                        mname = info[1]
-                        if not self._patientMiddleName:
-                            self._patientMiddleName = info[1]
-                    elif "last" in info[0].lower() :
-                        if not self._patientLastName:
-                            self._patientLastName = info[1]
-                        lname = info[1]
-                    else :
-                        name = info[1]
+                if "first" in info[0].lower() :
+                    fname = info[1]
+                    if not self._patientFirstName:
+                        self._patientFirstName = info[1]
+                elif "middle" in info[0].lower() :
+                    mname = info[1]
+                    if not self._patientMiddleName:
+                        self._patientMiddleName = info[1]
+                elif "last" in info[0].lower() :
+                    if not self._patientLastName:
+                        self._patientLastName = info[1]
+                    lname = info[1]
+                else :
+                    name = info[1]
+        if not self._patientName:
             if name.lstrip().rstrip():
                 self._patientName = name
             elif fname.lstrip().rstrip():
@@ -378,7 +389,10 @@ class ExtractMedicalInfo():
                     self._patientAddress = info[1]
                 
             if eval(self.generateIfCond(self._controlStatement.get("patientPhoneInTable"),'info[0].lower()' )):   
-                if not self._patientPhone:
+                if not self._patientPhone :
+                    if info[1]:
+                        if info[1].strip().isalpha():
+                            continue
                     self._patientPhone = info[1]
                 
             if eval(self.generateIfCond(self._controlStatement.get("patientCityAndZipInTable"),'info[0].lower()' )):   
@@ -429,6 +443,9 @@ class ExtractMedicalInfo():
                 
             if eval(self.generateIfCond(self._controlStatement.get("referToPhoneInTable"),'info[0].lower()' )):   
                 if self._patientPhone  != info[1].lstrip().rstrip():
+                    if info[1]:
+                        if info[1].strip().isalpha():
+                            continue
                     if not self._refToPhone:
                         self._refToPhone = info[1]
                 
@@ -458,12 +475,12 @@ class ExtractMedicalInfo():
             if eval(self.generateIfCond(self._controlStatement.get("referToCityInTable"),'info[0].lower()' )):
                 if self._patientCity  != info[1].lstrip().rstrip():
                     if not self._refToCity:
-                        self._refToCity   =  city
+                        self._refToCity   = info[1].lstrip().rstrip()
                 
             if eval(self.generateIfCond(self._controlStatement.get("referToZipInTable"),'info[0].lower()' )):
                     if self._patientStZip  != info[1].lstrip().rstrip():
                         if not self._refToStZip:
-                            self._refToStZip = stzip 
+                            self._refToStZip = info[1].lstrip().rstrip()
             
             if eval(self.generateIfCond(self._controlStatement.get("referToStateInTable"),'info[0].lower()' )):   
                 if self._patientState != info[1].lstrip().rstrip():
@@ -488,6 +505,12 @@ class ExtractMedicalInfo():
          
         for line in self._lineContents :
             if eval(self.generateIfCond(self._controlStatement.get("patientInfoInLine"),'line[0].lower()' )):
+                if line[0]:
+                  
+                    if len(line[0].split(" ")) > 10 :
+                        continue                
+                
+                
                 height , top , left , width = None , None, None, None
                 
                 addWidth = self.checkPateintReferInfoInSameLine(current = "patient" , check = "refer")
@@ -508,54 +531,60 @@ class ExtractMedicalInfo():
                     left = None
                 kvContent = self.extractKeyValueFromTable(top , height, left , width)
                  
-                if not self._patientName  :
+                 
                      
-                    fname , mname , lname, name  = '' , '' , '' , ''
-                    
-                    for info in kvContent :
-                         
-                        if "name" in info[0].lower():
-                            info[1] = info[1].lstrip().rstrip()
-                            if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
-                                if "," in info[1]:
-                                    nm = info[1].split(',')
-                                else :
-                                    nm = info[1].split(' ')
-                                self._patientFirstName = nm[0]
-                                self._patientLastName = nm[-1]
-                                if len(nm) == 3 :
-                                    self._patientMiddleName = nm[1]
-                                    
-                            elif ("first" in info[0].lower()) and ("last" in info[0].lower()):
-                                if "," in info[1]:
-                                    nm = info[1].split(',')
-                                else :
-                                    nm = info[1].split(' ')
-                                self._patientFirstName = nm[0]
-                                self._patientLastName = nm[-1]
-                            
-                            if "first" in info[0].lower() :
-                                fname = info[1]
-                                if not self._patientFirstName:
-                                    self._patientFirstName = info[1]
-                                continue
-                            elif "middle" in info[0].lower() :
-                                mname = info[1]
-                                if not self._patientMiddleName:
-                                    self._patientMiddleName = info[1]
-                                continue
-                            elif "last" in info[0].lower() :
-                                lname = info[1]
-                                if not self._patientLastName:
-                                    self._patientLastName = info[1]
-                                continue
+                fname , mname , lname, name  = '' , '' , '' , ''
+                
+                for info in kvContent :
+                     
+                    if "name" in info[0].lower():
+                        info[1] = info[1].lstrip().rstrip()
+                        if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
+                            if "," in info[1]:
+                                nm = info[1].split(',')
                             else :
-                                if info[1].lstrip().rstrip() :
-                                     
-                                     
-                                    name = info[1]
+                                nm = info[1].split(' ')
+
+                            if not self._patientFirstName:
+                                self._patientFirstName = nm[0]
+                            if not self._patientLastName:
+                                self._patientLastName = nm[-1]
+                            if len(nm) == 3 :
+                                self._patientMiddleName = nm[1]
+                                
+                        elif ("first" in info[0].lower()) and ("last" in info[0].lower()):
+                            if "," in info[1]:
+                                nm = info[1].split(',')
+                            else :
+                                nm = info[1].split(' ')
+                            if not self._patientFirstName :
+                                self._patientFirstName = nm[0]
+                            if not self._patientLastName :
+                                self._patientLastName = nm[-1]
+                        
+                        if "first" in info[0].lower() :
+                            fname = info[1]
+                            if not self._patientFirstName:
+                                self._patientFirstName = info[1]
+                            continue
+                        elif "middle" in info[0].lower() :
+                            mname = info[1]
+                            if not self._patientMiddleName:
+                                self._patientMiddleName = info[1]
+                            continue
+                        elif "last" in info[0].lower() :
+                            lname = info[1]
+                            if not self._patientLastName:
+                                self._patientLastName = info[1]
+                            continue
+                        else :
+                            if info[1].lstrip().rstrip() :
+                                 
+                                 
+                                name = info[1]
+                    if not self._patientName:
                         if name:
-                            if not self._patientName:
+                           
                               
                                 self._patientName = name
                              
@@ -599,6 +628,9 @@ class ExtractMedicalInfo():
                 if not self._patientPhone : 
                         for info in kvContent :
                             if eval(self.generateIfCond(self._controlStatement.get("patientPhoneInLine"),'info[0].lower()' )):
+                                if info[1]:
+                                    if info[1].strip().isalpha():
+                                        continue
                                 if len(info[1].lstrip().rstrip()) > 4:
                                     self._patientPhone = info[1].lstrip().rstrip()
                                  
@@ -647,19 +679,35 @@ class ExtractMedicalInfo():
         for line in self._lineContents : 
             if eval(self.generateIfCond(self._controlStatement.get("referToInfoInLine"),'line[0].lower()' )):
             #if ("refer" in line[0].lower() ) and  (("information" in line[0].lower()) or "name" in line[0].lower()  or  "physician" in line[0].lower() or  "detail" in line[0].lower()):
+                if line[0]:
+                    if len(line[0].split(" ")) > 5 :
+                        continue                
+                
+
                 height , top , left , width = None , None, None, None
                 addWidth = self.checkPateintReferInfoInSameLine(current = "refer" ,  check = "patient")
-                
+                if "to" in line[0].lower() and len(line[0].split(" ")) > 3:  
+                     
+                    continue 
+
                 height = round(line[1][1],2)
                 top = round(line[1][2],2) 
                 left = round(line[1][3],2)  
-                width = round(line[1][0],2)                   
+                width = round(line[1][0],2)  
+                originalheight =  height + top                 
                 height = height + top                
                 height = height + 0.20
                 width = width + left
                 width = width + 0.10
                 left = left - 0.10
-                
+
+                for line in self._lineContents : 
+                    if str(line[0]).lstrip().rstrip():
+                        if round(float(line[1][2]),3) >= top :  
+                            if round(float(line[1][2]),3) <= originalheight:  
+                                if eval(self.generateIfCond(self._controlStatement.get("referByInfoInLine"),'line[0].lower()' )):
+                                   
+                                    addWidth = True                   
                 if not addWidth:
                     width = None
                     left = None
@@ -676,7 +724,7 @@ class ExtractMedicalInfo():
                             if info[1].lstrip().rstrip() not in  self._patientName :
                                 if info[1].lstrip().rstrip():
                                     if not self._refToName:
-                                         
+                                        
                                         self._refToName = info[1]
                                               
                             
@@ -767,6 +815,9 @@ class ExtractMedicalInfo():
                              if ("phone" in info[0].lower()) or ("mobile" in info[0].lower()) or (("contact" in info[0].lower() and "number" in info[0].lower())): 
                                 if len(info[1].lstrip().rstrip()) > 4 :
                                     if self._patientPhone  != info[1].lstrip().rstrip():
+                                        if info[1]:
+                                            if info[1].strip().isalpha():
+                                                continue
                                         if not self._refToPhone:
                                             self._refToPhone = info[1]
                                    
@@ -825,19 +876,38 @@ class ExtractMedicalInfo():
             if eval(self.generateIfCond(self._controlStatement.get("referByInfoInLine"),'line[0].lower()' )):
             #if (("by" in line[0].lower() ) and  (("refer" in line[0].lower()) or "diagnos" in line[0].lower())) or (("from" in line[0].lower() ) and  (("refer" in line[0].lower()) or "diagnos" in line[0].lower())):
               
+                if line[0]:
+                    if len(line[0].split(" ")) > 5 :
+                        continue
+
+            
                 height , top , left , width = None , None, None, None
                 addWidth = self.checkPateintReferInfoInSameLine(current = "refer" ,  check = "patient")
                 
                 height = round(line[1][1],2)
                 top = round(line[1][2],2) 
                 left = round(line[1][3],2)  
-                width = round(line[1][0],2)                   
+                width = round(line[1][0],2)
+                originalheight =  height + top                  
                 height = height + top                
                 height = height + 0.20
                 width = width + left
                 width = width + 0.10
                 left = left - 0.10
                 
+                
+                if "from" in line[0].lower() and len(line[0].split(" ")) > 3: 
+                    
+                    continue 
+ 
+                for line in self._lineContents : 
+                    if str(line[0]).lstrip().rstrip():
+                        if round(float(line[1][2]),3) >= top :  
+                            if round(float(line[1][2]),3) <= originalheight:  
+                              
+                                if eval(self.generateIfCond(self._controlStatement.get("referToInfoInLine"),'line[0].lower()' )):
+                                    
+                                    addWidth = True                 
                 if not addWidth:
                     width = None
                     left = None
@@ -853,6 +923,7 @@ class ExtractMedicalInfo():
                                 if info[1] != self._refToName:
                                     if info[1].lstrip().rstrip():
                                         if not self._refByName:
+                                            
                                             self._refByName = info[1]
                         
                     if not self._refByAddress:
@@ -914,6 +985,9 @@ class ExtractMedicalInfo():
                             if info[1] != self._patientPhone :
                                 if info[1] != self._refToPhone:
                                     if len(info[1].lstrip().rstrip()) > 4 :
+                                        if info[1]:
+                                            if info[1].strip().isalpha():
+                                                continue
                                         if not self._refByPhone:
                                             self._refByPhone = info[1]
                         
@@ -1271,9 +1345,12 @@ class ExtractMedicalInfo():
         for content in self._keyValuePairs :  
             
             if eval(self.generateIfCond(self._controlStatement.get("icdInfo"),'content[0].lower()' )):
-                icdInfoList.append(content[1])
+                check =  content[1].replace(" ", "")
+                if not check :
+                    content[1] = None
+                icdInfoList.append([content[0],content[1]])
         
-        return ' '.join(icdInfoList)
+        return icdInfoList
     
     
     
@@ -1380,9 +1457,28 @@ class ExtractMedicalInfo():
                     if speciality.strip() in line[0].lower().strip():
                         self._speciality = speciality
                         continue
-         
-        self._diagnosis = self._diagnosis.replace("&" , "")                  
+        if self._diagnosis:
+            self._diagnosis = self._diagnosis.replace("&" , "")                  
         
+        
+        if self._patientPhone:
+            phone = self._patientPhone.replace(" ", "")
+             
+            if phone.isalpha():
+                self._patientPhone = None
+                
+        if self._refToPhone:
+            phone = self._refToPhone.replace(" ", "")
+             
+            if phone.isalpha():
+                self._refToPhone = None
+                
+        if self._refByPhone:
+            phone = self._refByPhone.replace(" ", "")
+             
+            if phone.isalpha():
+                self._refByPhone = None
+                
     def extractReferalReasonFromTable(self):
         
         referalReasonTable = False
@@ -1450,4 +1546,5 @@ class ExtractMedicalInfo():
                                                 refLineCount = refLineCount + 1
                                             if refLineFound and refLineCount == 2:
                                                 refLineFound = False
-                                                self._refReason = line[0]
+                                                self._refReason = line[0] 
+                                                
