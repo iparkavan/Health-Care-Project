@@ -15,9 +15,10 @@ keywords:
         female:
               - female           
         refertotname:
-              - refer & name 
+              - referral & name 
               - refer & to 
               - refer  & physician
+              - to
         referreason:
               - refer & reason
               - refer & $for
@@ -33,6 +34,7 @@ keywords:
         referbyname:
               - refer & from
               - refer & by 
+              - from
         icd:
               - icd 
               - diagnosis & code
@@ -56,7 +58,7 @@ keywords:
               - contact & number
               - $cell
         patientAddressInTable:
-              - address & ~symptom & ~issue
+              - address & ~symptom & ~issue & ~mail
                
         patientCityAndZipInTable:
               - city & zip
@@ -74,9 +76,10 @@ keywords:
         refertable:
               - refer & information
               - refer &  details
+              - refer & to
 
         referToAddressInTable:
-              - address & ~symptom & ~issue
+              - address & ~symptom & ~issue & ~mail
               
         referToCityAndZipInTable:
               - city & zip
@@ -125,7 +128,7 @@ keywords:
               - gender
               - sex              
         patientAddressInLine:
-              - address & ~symptom & ~issue
+              - address & ~symptom & ~issue & ~mail
                
         patientPhoneInLine:
               - phone
@@ -148,10 +151,10 @@ keywords:
               - refer & name 
               - refer & physician 
               - refer & detail
-              - referring & provider 
+              #- referring & provider 
               - physician & information     
               - referral$to
-              
+              - to
         referToNameInLine:
               - name 
               - referring
@@ -169,7 +172,7 @@ keywords:
               - contact & number 
           
         referToAddressInLine:
-              - address & ~symptom & ~issue
+              - address & ~symptom & ~issue & ~mail
                
             
         referToCityAndZipInLine:
@@ -188,17 +191,18 @@ keywords:
               - diagnos & by 
               - refer &   from
               - diagnos & from 
+              - from
         referByNameInLine:
               - by 
               - from
-              - name   
+              - name              
         referByPhoneInLine:
               - phone
               - mobile
               - contact & number 
               - $cell
         referByAddressInLine:
-              - address & ~symptom & ~issue
+              - address & ~symptom & ~issue & ~mail
                
             
         referByCityAndZipInLine:
