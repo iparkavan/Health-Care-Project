@@ -101,6 +101,13 @@ def process_file(bucket, key, request_id, data_log: DataLog):
         fallouts = finaljson.pop('fallouts')
         data_log.follow_up_reason = f"{fallouts}"
         data_log.update_record()
+        if 'icd_db_results' in finaljson:
+            icd_db_results = finaljson.pop('icd_db_results')
+            for icd_db_result in icd_db_results:
+                icd_db_result['request_id'] = request_id
+                icd_db_result['s3_path'] = f"s3://{bucket}/{key}"
+            response = insert_records(icd_db_results, "ExtractedICDInfo")
+            print(" response of Insertion icd db results", response)
         # Data Ingestion
         finaljson['request_id'] = request_id
         finaljson['s3_path'] = f"s3://{bucket}/{key}"
