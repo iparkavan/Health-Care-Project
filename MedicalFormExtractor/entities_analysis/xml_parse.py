@@ -31,7 +31,7 @@ class ICD:
             self._error = True
             self._logger.append("Invalid ICD code")
             return
-        if not re.match('^[a-zA-z]{1}[0-9]{2}(\.)?(?(1)([0-9]{1,3}|[0-9]{1,3}[a-zA-Z]{1}))$' , self._icd_value):
+        if not re.match('^[a-zA-z]{1}[0-9]{2}(\.)?(?(1)([0-9]{1,3}|[0-9]{1,3}[a-zA-Z]{1,}))$' , self._icd_value):
             self._error = True
             self._logger.append("Invalid ICD code")
             return
