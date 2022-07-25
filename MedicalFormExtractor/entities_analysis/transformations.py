@@ -185,36 +185,37 @@ class MedTransformation:
         if self._icd_info:
             for icd_val in self._icd_info:
                 icd_key, icd_value, icd_key_list = None, None, []
-                # NO ICD Code is given and ICD No desc is given
-                # Fetch ICD Code based on data from extract based on match threshold
-                icd_key, icd_value, icd_key_list = get_icd_medcomp(icd_val[1])
-                if not icd_key and not icd_key_list:
-                    myobj = ICDMatcher(icd_val[1])
-                    icd_key, icd_value, icd_key_list = myobj.get_icd_data_fuzz()
-                if icd_key:
-                    self._icd_code_list.extend([icd_key])
-                    self._icd_desc_list.extend([icd_value])
-                elif icd_key_list:
-                    self._icd_code_group.extend(icd_key_list)
-                    
-                if icd_key:
-                    self._icd_db_res["ICD_Code"] = icd_key
-                    self._icd_db_res["ICD_Desc"] = icd_value
-                    self._icd_db_res["Confidence"] = None
-                    self._icd_db_res["Status"] = "Complete"
-                    self._icd_db_res["Category"] = icd_val[0]
-                    self._icd_db_res["PDF_Text"] = icd_val[1]
-                    
-                    self._icd_results.append(copy(self._icd_db_res))
-                    
-                elif icd_key_list:
-                    for val in icd_key_list:
-                        self._icd_db_res["ICD_Code"] = val["Code"]
-                        self._icd_db_res["ICD_Desc"] = val["Description"]
-                        self._icd_db_res["Confidence"] = round(val["Score"], 2)
-                        self._icd_db_res["Status"] = "Incomplete"
+                if len(icd_val) == 2 and icd_val[1] is not None:
+                    # NO ICD Code is given and ICD No desc is given
+                    # Fetch ICD Code based on data from extract based on match threshold
+                    icd_key, icd_value, icd_key_list = get_icd_medcomp(icd_val[1])
+                    if not icd_key and not icd_key_list:
+                        myobj = ICDMatcher(icd_val[1])
+                        icd_key, icd_value, icd_key_list = myobj.get_icd_data_fuzz()
+                    if icd_key:
+                        self._icd_code_list.extend([icd_key])
+                        self._icd_desc_list.extend([icd_value])
+                    elif icd_key_list:
+                        self._icd_code_group.extend(icd_key_list)
+                        
+                    if icd_key:
+                        self._icd_db_res["ICD_Code"] = icd_key
+                        self._icd_db_res["ICD_Desc"] = icd_value
+                        self._icd_db_res["Confidence"] = None
+                        self._icd_db_res["Status"] = "Complete"
                         self._icd_db_res["Category"] = icd_val[0]
                         self._icd_db_res["PDF_Text"] = icd_val[1]
-                    
+                        
                         self._icd_results.append(copy(self._icd_db_res))
+                        
+                    elif icd_key_list:
+                        for val in icd_key_list:
+                            self._icd_db_res["ICD_Code"] = val["Code"]
+                            self._icd_db_res["ICD_Desc"] = val["Description"]
+                            self._icd_db_res["Confidence"] = round(val["Score"], 2)
+                            self._icd_db_res["Status"] = "Incomplete"
+                            self._icd_db_res["Category"] = icd_val[0]
+                            self._icd_db_res["PDF_Text"] = icd_val[1]
+                        
+                            self._icd_results.append(copy(self._icd_db_res))
 
