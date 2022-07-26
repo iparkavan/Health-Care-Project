@@ -52,6 +52,25 @@ class MedTransformation:
         icd_json_map = med_load_data["ICDInfoJsonMap"]
         for key, value in icd_json_map.items():
             self.medInfoJson[key] = getattr(self, value)
+        
+        try:
+            if self.medInfoJson["patient_address"] and not self.medInfoJson["patient_st_zip"]:
+                zip = re.findall("\d{5}(?:[-\s]\d{4})?$", self.medInfoJson["patient_address"])
+                if zip:
+                    self.medInfoJson["patient_st_zip"] = zip[0]
+                    
+            if self.medInfoJson["ref_to_address"] and not self.medInfoJson["ref_to_st_zip"]:
+                zip = re.findall("\d{5}(?:[-\s]\d{4})?$", self.medInfoJson["ref_to_address"])
+                if zip:
+                    self.medInfoJson["ref_to_st_zip"] = zip[0]
+                    
+            if self.medInfoJson["ref_by_address"] and not self.medInfoJson["ref_by_st_zip"]:
+                zip = re.findall("\d{5}(?:[-\s]\d{4})?$", self.medInfoJson["ref_by_address"])
+                if zip:
+                    self.medInfoJson["ref_by_st_zip"] = zip[0]
+        except:
+            pass
+
 
         try:
             all_icd_data = get_dump_record_all()
@@ -164,7 +183,7 @@ class MedTransformation:
             if self._icd_code:
                 self._icd_db_res["ICD_Code"] = self._icd_code
                 self._icd_db_res["ICD_Desc"] = self._icd_desc
-                self._icd_db_res["Confidence"] = None
+                self._icd_db_res["Confidence"] = 100
                 self._icd_db_res["Status"] = "Complete"
                 self._icd_db_res["Category"] = "ICD_Desc" if parsed_icd_desc[i] else "ICD_Code"
                 self._icd_db_res["PDF_Text"] = parsed_icd_desc[i] if parsed_icd_desc[i] else parsed_icd_code[i]
@@ -201,7 +220,7 @@ class MedTransformation:
                     if icd_key:
                         self._icd_db_res["ICD_Code"] = icd_key
                         self._icd_db_res["ICD_Desc"] = icd_value
-                        self._icd_db_res["Confidence"] = None
+                        self._icd_db_res["Confidence"] = 100
                         self._icd_db_res["Status"] = "Complete"
                         self._icd_db_res["Category"] = icd_val[0]
                         self._icd_db_res["PDF_Text"] = icd_val[1]

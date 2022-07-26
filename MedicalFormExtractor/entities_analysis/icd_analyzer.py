@@ -31,7 +31,7 @@ class ICDMatcher:
         icd_records = get_dump_record_all()
         if icd_records:
             for data in icd_records:
-                similarity = fuzz.ratio(self._data, data[1])
+                similarity = fuzz.ratio(self._data, data[1]) * 0.9
                 if similarity >= self._max_match:
                     self._key_list.append({
                         'Code': data[0],
