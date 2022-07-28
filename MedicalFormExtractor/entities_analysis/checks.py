@@ -116,4 +116,4 @@ class Checkups:
                 pass
             logger.warning(f' multiple icd codes matched', extra={'foo': 'Prime Checks'})
             self.error = True
-            self.fallouts.append(f'multiple icd codes matched  {self.finaljson["icd_code_group"]}')
+            # self.fallouts.append(f'multiple icd codes matched  {self.finaljson["icd_code_group"]}')
