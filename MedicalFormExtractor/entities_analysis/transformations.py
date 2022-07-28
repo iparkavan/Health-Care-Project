@@ -54,20 +54,40 @@ class MedTransformation:
             self.medInfoJson[key] = getattr(self, value)
         
         try:
+            add_pattern = r'^(?P<add>[\w\s,\/]+),[\s]?(?P<state>\w+(?:[\s]\w+)?)[\s]?(?P<zip>\d{5}(?:[-\s]\d{4})?)$'
             if self.medInfoJson["patient_address"] and not self.medInfoJson["patient_st_zip"]:
                 zip = re.findall("\d{5}(?:[-\s]\d{4})?$", self.medInfoJson["patient_address"])
                 if zip:
                     self.medInfoJson["patient_st_zip"] = zip[0]
-                    
+                addr_obj = re.match(
+                    add_pattern,
+                    re.sub(' +', ' ', self.medInfoJson["patient_address"])
+                )
+                if addr_obj and addr_obj.groupdict().get('state') and not self.medInfoJson["patient_state"]:
+                    self.medInfoJson["patient_state"] = addr_obj.groupdict().get('state')
+
             if self.medInfoJson["ref_to_address"] and not self.medInfoJson["ref_to_st_zip"]:
                 zip = re.findall("\d{5}(?:[-\s]\d{4})?$", self.medInfoJson["ref_to_address"])
                 if zip:
                     self.medInfoJson["ref_to_st_zip"] = zip[0]
+                addr_obj = re.match(
+                    add_pattern,
+                    re.sub(' +', ' ', self.medInfoJson["ref_to_address"])
+                )
+                if addr_obj and addr_obj.groupdict().get('state') and not self.medInfoJson["ref_to_state"]:
+                    self.medInfoJson["ref_to_state"] = addr_obj.groupdict().get('state')
                     
             if self.medInfoJson["ref_by_address"] and not self.medInfoJson["ref_by_st_zip"]:
                 zip = re.findall("\d{5}(?:[-\s]\d{4})?$", self.medInfoJson["ref_by_address"])
                 if zip:
                     self.medInfoJson["ref_by_st_zip"] = zip[0]
+                addr_obj = re.match(
+                    add_pattern,
+                    re.sub(' +', ' ', self.medInfoJson["ref_by_address"])
+                )
+                if addr_obj and addr_obj.groupdict().get('state') and not self.medInfoJson["ref_by_state"]:
+                    self.medInfoJson["ref_by_state"] = addr_obj.groupdict().get('state')
+
         except:
             pass
 
