@@ -161,6 +161,27 @@ class ExtractMedicalInfo():
          
         for content in self._keyValuePairs :
             
+
+
+            if eval(self.generateIfCond(self._controlStatement.get("patientFirstName"),'content[0].lower()' )):
+                if content[1] : 
+                    if not self._patientFirstName:
+                        
+                        self._patientFirstName = content[1]
+
+            if eval(self.generateIfCond(self._controlStatement.get("patientLastName"),'content[0].lower()' )):
+                if content[1] : 
+                    if not self._patientLastName:
+                        
+                        self._patientLastName =  content[1]
+                        
+
+            if eval(self.generateIfCond(self._controlStatement.get("patientMiddleName"),'content[0].lower()' )):
+                if content[1] : 
+                    if not self._patientMiddleName:
+                        
+                        self._patientMiddleName =  content[1]
+                        
             
             if eval(self.generateIfCond(self._controlStatement.get("patientname"),'content[0].lower()' )):
                 if content[1] : 
@@ -252,7 +273,16 @@ class ExtractMedicalInfo():
             #if eval(self._controlStatement.get("patientgender")) in content[0].lower():
                 if content[1]:
                     if not self._speciality :
-                        self._speciality = content[1]                       
+                        self._speciality = content[1]    
+                        
+            if self._patientFirstName or self._patientLastName or self._patientMiddleName:
+                if str(self._patientFirstName) == "None":
+                    self._patientFirstName = ""
+                if str(self._patientLastName) == "None":
+                    self._patientLastName = ""
+                if str(self._patientMiddleName) == "None":
+                    self._patientMiddleName = ""
+                self._patientName = self._patientFirstName + self._patientMiddleName + self._patientLastName
     
     def getPatientInfoTable(self):
         
