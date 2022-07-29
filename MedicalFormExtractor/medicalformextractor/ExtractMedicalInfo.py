@@ -33,6 +33,9 @@ class ExtractMedicalInfo():
         self._patientState = None
         
         self._refToName = ""
+        self._refToFirstName = None
+        self._refToMiddleName = None
+        self._refToLastName = None
         self._refToDate = None
         self._refToAddress = None
         self._refToCity = None
@@ -42,6 +45,9 @@ class ExtractMedicalInfo():
         self._refToState = None
 
         self._refByName = ""
+        self._refByFirstName = None
+        self._refByMiddleName = None
+        self._refByLastName = None
         self._refByAddress = None
         self._refByCity = None
         self._refByStZip = None
@@ -94,9 +100,9 @@ class ExtractMedicalInfo():
        
         print("-----------------------")
         print("Patient Name :" ,self._patientName ,'\n',
-              "FirstName :", self._patientFirstName , '\n',
-              "Middle Name : ", self._patientMiddleName , '\n',
-              "Last Name : ", self._patientLastName , '\n',
+              "Patient FirstName :", self._patientFirstName , '\n',
+              "Patient Middle Name : ", self._patientMiddleName , '\n',
+              "Patient Last Name : ", self._patientLastName , '\n',
               "Patient DOB :" , self._patientDOB ,'\n',
               "Patient MRN :" ,self._patientMRN ,'\n',
               "Patient Gender :" , self._patientGender ,'\n',
@@ -106,6 +112,9 @@ class ExtractMedicalInfo():
               "Patient State Zip", self._patientStZip , '\n',
               "Patient State", self._patientState , '\n',
               "Rfereal To Name: " , self._refToName, '\n' , 
+              "Rfereal To First Name: " , self._refToFirstName, '\n' , 
+              "Rfereal To Middle Name: " , self._refToMiddleName, '\n' , 
+              "Rfereal To Last ame: " , self._refToLastName, '\n' , 
               "Ref To Date :" , self._refToDate , '\n' , 
               "Ref To Address :" , self._refToAddress , '\n',
               "Ref To City:" , self._refToCity , '\n', 
@@ -114,6 +123,9 @@ class ExtractMedicalInfo():
               "Ref To Phone:" , self._refToPhone , '\n',
               "Ref To Fax", self._refToFax, '\n',
               "Ref By Name" , self._refByName , '\n',
+              "Rfereal By First Name: " , self._refByFirstName, '\n' , 
+              "Rfereal By Middle Name: " , self._refByMiddleName, '\n' , 
+              "Rfereal By Last ame: " , self._refByLastName, '\n' , 
               "Ref By Address" ,  self._refByAddress, '\n',
               "Ref By City" , self._refByCity , '\n',
               "Ref By Zip" , self._refByStZip , '\n',
@@ -149,9 +161,11 @@ class ExtractMedicalInfo():
          
         for content in self._keyValuePairs :
             
+            
             if eval(self.generateIfCond(self._controlStatement.get("patientname"),'content[0].lower()' )):
                 if content[1] : 
                     if not self._patientName:
+                        
                         self._patientName = self._patientName + ' ' + content[1]
             
             if eval(self.generateIfCond(self._controlStatement.get("patientdob"),'content[0].lower()' )):
@@ -168,6 +182,7 @@ class ExtractMedicalInfo():
             
             if eval(self.generateIfCond(self._controlStatement.get("patientgender"),'content[0].lower()' )):
             #if eval(self._controlStatement.get("patientgender")) in content[0].lower():
+                
                 if content[1]:
                     if not self._patientGender :
                         self._patientGender = content[1]
@@ -178,6 +193,7 @@ class ExtractMedicalInfo():
                     continue
                 if content[1]:
                     if not self._refToName:
+                       
                         self._refToName = self._refToName + " " + content[1]
             
             if eval(self.generateIfCond(self._controlStatement.get("referreason"),'content[0].lower()' )):
@@ -339,34 +355,72 @@ class ExtractMedicalInfo():
             if "name" in info[0].lower():
                 info[1] = info[1].lstrip().rstrip()
                 if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
+                    findex = info[0].lower().index("first")
+                    mindex = info[0].lower().index("middle")
+                    lindex = info[0].lower().index("last")
+                    d = {"findex": findex , "mindex": mindex , "lindex": lindex}
+                    sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                    sortKeys = list(sortedD.keys())
+                    findex = sortKeys.index("findex")
+                    mindex = sortKeys.index("mindex")
+                    lindex = sortKeys.index("lindex")
+                    
                     
                     if "," in info[1]:
                         nm = info[1].split(',')
                     else :
                         nm = info[1].split(' ')
+
                     if not self._patientFirstName:
-                        self._patientFirstName = nm[0]
+                        try :
+                            self._patientFirstName = nm[findex]
+                        except IndexError :
+                            self._patientFirstName = None
+                            
                     if not self._patientLastName:
-                        self._patientLastName = nm[-1]
-                    if len(nm) == 3 :
-                        if not self._patientMiddleName:
-                            self._patientMiddleName = nm[1]
+                        try :
+                            self._patientLastName = nm[lindex]
+                        except IndexError :
+                            self._patientLastName = None
+                            
+                    if not self._patientMiddleName:
+                        try :
+                            self._patientMiddleName = nm[mindex]
+                        except IndexError :
+                            self._patientMiddleName = None 
                         
-                elif ("first" in info[0].lower()) and ("last"  in info[0].lower()):
+                elif ("first" in info[0].lower()) and ("last" in info[0].lower()):
+                    
+                    findex = info[0].lower().index("first")
+                    lindex = info[0].lower().index("last")
+                    d = {"findex": findex ,  "lindex": lindex}
+                    sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                    sortKeys = list(sortedD.keys())
+                    findex = sortKeys.index("findex")
+                    lindex = sortKeys.index("lindex")
                     if "," in info[1]:
                         nm = info[1].split(',')
                     else :
                         nm = info[1].split(' ')
                     if not self._patientFirstName:
-                        self._patientFirstName = nm[0]
+                        try :
+                            self._patientFirstName = nm[findex]
+                        except IndexError :
+                            self._patientFirstName = None
+                            
                     if not self._patientLastName:
-                        self._patientLastName = nm[-1]
+                        try :
+                            self._patientLastName = nm[lindex]
+                        except IndexError :
+                            self._patientLastName = None
 
                 if "first" in info[0].lower() :
+                  
                     fname = info[1]
                     if not self._patientFirstName:
                         self._patientFirstName = info[1]
                 elif "middle" in info[0].lower() :
+                  
                     mname = info[1]
                     if not self._patientMiddleName:
                         self._patientMiddleName = info[1]
@@ -433,9 +487,94 @@ class ExtractMedicalInfo():
                 if ("name" in info[0].lower()) or ("to" in info[0].lower()):
                     if self._patientName  != info[1].lstrip().rstrip() :
                         if not  self._refToName:
+                             
                             self._refToName = self._refToName + ' ' + info[1]
-        
+                            
+        fname , mname , lname, name  = '' , '' , '' , ''        
         for info in referalContent :
+            if "name" in info[0].lower():
+                info[1] = info[1].lstrip().rstrip()
+                if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
+                    findex = info[0].lower().index("first")
+                    mindex = info[0].lower().index("middle")
+                    lindex = info[0].lower().index("last")
+                    d = {"findex": findex , "mindex": mindex , "lindex": lindex}
+                    sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                    sortKeys = list(sortedD.keys())
+                    findex = sortKeys.index("findex")
+                    mindex = sortKeys.index("mindex")
+                    lindex = sortKeys.index("lindex")
+                   
+                    
+                    if "," in info[1]:
+                        nm = info[1].split(',')
+                    else :
+                        nm = info[1].split(' ')
+
+                    if not self._refToFirstName:
+                        try :
+                            self._refToFirstName = nm[findex]
+                        except IndexError:
+                            self._refToFirstName = None
+                            
+                    if not self._refToLastName:
+                        try:
+                            self._refToLastName = nm[lindex]
+                        except IndexError:
+                            self._refToLastName = None
+                            
+                    if not self._refToMiddleName:
+                        try:
+                            self._refToMiddleName = nm[mindex]
+                        except IndexError:
+                            self._refToMiddleName = None
+                            
+                elif ("first" in info[0].lower()) and ("last" in info[0].lower()):
+                    
+                    findex = info[0].lower().index("first")
+                    lindex = info[0].lower().index("last")
+                    d = {"findex": findex ,  "lindex": lindex}
+                    sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                    sortKeys = list(sortedD.keys())
+                    findex = sortKeys.index("findex")
+                    lindex = sortKeys.index("lindex")
+                    if "," in info[1]:
+                        nm = info[1].split(',')
+                    else :
+                        nm = info[1].split(' ')
+                    if not self._refToFirstName :
+                        try:
+                            self._refToFirstName = nm[findex]
+                        except IndexError:
+                            self._refToFirstName = None
+                            
+                    if not self._refToLastName :
+                        try :
+                            self._refToLastName = nm[lindex]
+                        except IndexError:
+                            self._refToLastName = None
+
+                if "first" in info[0].lower() :
+                  
+                    fname = info[1]
+                    if not self._refToFirstName:
+                        self._refToFirstName = info[1]
+                elif "middle" in info[0].lower() :
+                  
+                    mname = info[1]
+                    if not self._refToMiddleName:
+                        self._refToMiddleName = info[1]
+                elif "last" in info[0].lower() :
+                    if not self._refToLastName:
+                        self._refToLastName = info[1]
+                if not self._refToName:
+                     
+                    self._refToName = fname + ' ' + mname + ' ' + lname           
+            
+            
+            
+
+            
             if eval(self.generateIfCond(self._controlStatement.get("referToAddressInTable"),'info[0].lower()' )): 
                 if self._patientAddress  != info[1].lstrip().rstrip():
                     if not self._refToAddress:
@@ -526,48 +665,113 @@ class ExtractMedicalInfo():
                 width = width + 0.10
                 left = left - 0.10
                 
+          
+                
                 if not addWidth:
                     width = None
                     left = None
+                
+                if not addWidth:
+                    for line in self._lineContents : 
+                        if str(line[0]).lstrip().rstrip():
+                            if round(float(line[1][2]),3) >= top :  
+                                if round(float(line[1][2]),3) <= height:   
+                                    if eval(self.generateIfCond(self._controlStatement.get("referToInfoInLine"),'line[0].lower()' )):
+                                        if line[0]:
+                                            if len(line[0].split(" ")) > 5 :
+                                                continue
+                                            if "to" in line[0].lower() and len(line[0].replace(" ", "")) > 20 : 
+                                                continue
+                                            height = round(line[1][1],2)
+                                            height = top + height + 0.01
+                                            break
+                                    if eval(self.generateIfCond(self._controlStatement.get("referByInfoInLine"),'line[0].lower()' )):
+                                        if line[0]:
+                                            if len(line[0].split(" ")) > 5 :
+                                                continue
+                                            if "from" in line[0].lower() and len(line[0].replace(" ", "")) > 20: 
+                                                continue
+                                            height = round(line[1][1],2)
+                                            height = top + height + 0.01
+                                            break      
+                                    
                 kvContent = self.extractKeyValueFromTable(top , height, left , width)
                  
                  
-                     
+                  
                 fname , mname , lname, name  = '' , '' , '' , ''
                 
                 for info in kvContent :
-                     
+                    
                     if "name" in info[0].lower():
                         info[1] = info[1].lstrip().rstrip()
                         if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
+                            findex = info[0].lower().index("first")
+                            mindex = info[0].lower().index("middle")
+                            lindex = info[0].lower().index("last")
+                            d = {"findex": findex , "mindex": mindex , "lindex": lindex}
+                            sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                            sortKeys = list(sortedD.keys())
+                            findex = sortKeys.index("findex")
+                            mindex = sortKeys.index("mindex")
+                            lindex = sortKeys.index("lindex")
+                             
+                            
                             if "," in info[1]:
                                 nm = info[1].split(',')
                             else :
                                 nm = info[1].split(' ')
-
+                             
                             if not self._patientFirstName:
-                                self._patientFirstName = nm[0]
+                                try :
+                                    self._patientFirstName = nm[findex]
+                                except IndexError :
+                                    self._patientFirstName = None
+                                    
                             if not self._patientLastName:
-                                self._patientLastName = nm[-1]
-                            if len(nm) == 3 :
-                                self._patientMiddleName = nm[1]
-                                
+                                try :
+                                    self._patientLastName = nm[lindex]
+                                except IndexError :
+                                    self._patientLastName = None
+                                    
+                            if not self._patientMiddleName :
+                                try :
+                                    self._patientMiddleName = nm[mindex]
+                                except IndexError :
+                                    self._patientMiddleName = None 
+                                    
                         elif ("first" in info[0].lower()) and ("last" in info[0].lower()):
+                            
+                            findex = info[0].lower().index("first")
+                            lindex = info[0].lower().index("last")
+                            d = {"findex": findex ,  "lindex": lindex}
+                            sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                            sortKeys = list(sortedD.keys())
+                            findex = sortKeys.index("findex")
+                            lindex = sortKeys.index("lindex")
                             if "," in info[1]:
                                 nm = info[1].split(',')
                             else :
                                 nm = info[1].split(' ')
                             if not self._patientFirstName :
-                                self._patientFirstName = nm[0]
+                                try :
+                                    self._patientFirstName = nm[findex]
+                                except IndexError :
+                                    self._patientFirstName = None
+                                    
                             if not self._patientLastName :
-                                self._patientLastName = nm[-1]
-                        
+                                try:
+                                    self._patientLastName = nm[lindex]
+                                except IndexError :
+                                    self._patientLastName = None
                         if "first" in info[0].lower() :
+                            
                             fname = info[1]
                             if not self._patientFirstName:
                                 self._patientFirstName = info[1]
                             continue
                         elif "middle" in info[0].lower() :
+                            
                             mname = info[1]
                             if not self._patientMiddleName:
                                 self._patientMiddleName = info[1]
@@ -679,40 +883,76 @@ class ExtractMedicalInfo():
         for line in self._lineContents : 
             if eval(self.generateIfCond(self._controlStatement.get("referToInfoInLine"),'line[0].lower()' )):
             #if ("refer" in line[0].lower() ) and  (("information" in line[0].lower()) or "name" in line[0].lower()  or  "physician" in line[0].lower() or  "detail" in line[0].lower()):
+                
                 if line[0]:
                     if len(line[0].split(" ")) > 5 :
                         continue                
                 
-
+              
                 height , top , left , width = None , None, None, None
                 addWidth = self.checkPateintReferInfoInSameLine(current = "refer" ,  check = "patient")
-                if "to" in line[0].lower() and len(line[0].split(" ")) > 3:  
-                     
+                
+                if "to" in line[0].lower() and len(line[0].replace(" ", "")) > 20:  
+                    
                     continue 
-
+                 
                 height = round(line[1][1],2)
                 top = round(line[1][2],2) 
                 left = round(line[1][3],2)  
                 width = round(line[1][0],2)  
                 originalheight =  height + top                 
                 height = height + top                
-                height = height + 0.20
+                height = height + 0.30
                 width = width + left
                 width = width + 0.10
                 left = left - 0.10
+                
 
+
+                 
+ 
+                                  
                 for line in self._lineContents : 
                     if str(line[0]).lstrip().rstrip():
                         if round(float(line[1][2]),3) >= top :  
                             if round(float(line[1][2]),3) <= originalheight:  
                                 if eval(self.generateIfCond(self._controlStatement.get("referByInfoInLine"),'line[0].lower()' )):
                                    
-                                    addWidth = True                   
+                                    addWidth = True 
+                
+                if not addWidth :
+                    for line in self._lineContents : 
+                        if str(line[0]).lstrip().rstrip():
+                            if round(float(line[1][2]),3) >= top :  
+                                if round(float(line[1][2]),3) <= height:   
+                                    if eval(self.generateIfCond(self._controlStatement.get("patientInfoInLine"),'line[0].lower()' )):
+                                        if line[0]:
+                                            if len(line[0].split(" ")) > 5 :
+                                                continue
+                                             
+                                            height = round(line[1][1],2)
+                                            height = top + height + 0.01
+                                            #print("ihjihih", line[0]) 
+                                            break
+                                    if eval(self.generateIfCond(self._controlStatement.get("referByInfoInLine"),'line[0].lower()' )):
+                                        if line[0]:
+                                            if len(line[0].split(" ")) > 5 :
+                                                continue
+                                            if "from" in line[0].lower() and len(line[0].replace(" ", "")) > 20: 
+                                                continue
+                                            height = round(line[1][1],2)
+                                            height = top + height + 0.01
+                                            
+                                            break    
+                
+                
+                #print(line[0], top , height)
                 if not addWidth:
                     width = None
                     left = None
+                    
                 kvContent = self.extractKeyValueFromTable(top , height, left , width)
-                 
+               
                 if not self._refToName:
 
                      for info in kvContent:
@@ -724,9 +964,91 @@ class ExtractMedicalInfo():
                             if info[1].lstrip().rstrip() not in  self._patientName :
                                 if info[1].lstrip().rstrip():
                                     if not self._refToName:
-                                        
+                                         
                                         self._refToName = info[1]
-                                              
+                                        
+                                        
+                fname , mname , lname, name  = '' , '' , '' , ''
+                for info in kvContent :
+                    if "name" in info[0].lower():
+                        info[1] = info[1].lstrip().rstrip()
+                        if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
+                            findex = info[0].lower().index("first")
+                            mindex = info[0].lower().index("middle")
+                            lindex = info[0].lower().index("last")
+                            d = {"findex": findex , "mindex": mindex , "lindex": lindex}
+                            sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                            sortKeys = list(sortedD.keys())
+                            findex = sortKeys.index("findex")
+                            mindex = sortKeys.index("mindex")
+                            lindex = sortKeys.index("lindex")
+                           
+                            
+                            if "," in info[1]:
+                                nm = info[1].split(',')
+                            else :
+                                nm = info[1].split(' ')
+        
+                            if not self._refToFirstName:
+                                try :
+                                    self._refToFirstName = nm[findex]
+                                except IndexError:
+                                    self._refToFirstName = None
+                                    
+                            if not self._refToLastName:
+                                try:
+                                    self._refToLastName = nm[lindex]
+                                except IndexError:
+                                    self._refToLastName = None
+                                    
+                            if not self._refToMiddleName :
+                                try:
+                                    self._refToMiddleName = nm[mindex]
+                                except IndexError:
+                                    self._refToMiddleName = None
+                                
+                        elif ("first" in info[0].lower()) and ("last" in info[0].lower()):
+                            
+                            findex = info[0].lower().index("first")
+                            lindex = info[0].lower().index("last")
+                            d = {"findex": findex ,  "lindex": lindex}
+                            sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                            sortKeys = list(sortedD.keys())
+                            findex = sortKeys.index("findex")
+                            lindex = sortKeys.index("lindex")
+                            if "," in info[1]:
+                                nm = info[1].split(',')
+                            else :
+                                nm = info[1].split(' ')
+                            if not self._refToFirstName:
+                                try :
+                                    self._refToFirstName = nm[findex]
+                                except IndexError:
+                                    self._refToFirstName = None
+                                    
+                            if not self._refToLastName:
+                                try:
+                                    self._refToLastName = nm[lindex]
+                                except IndexError:
+                                    self._refToLastName = None
+        
+                        if "first" in info[0].lower() :
+                          
+                            fname = info[1]
+                            if not self._refToFirstName:
+                                self._refToFirstName = info[1]
+                        elif "middle" in info[0].lower() :
+                          
+                            mname = info[1]
+                            if not self._refToMiddleName:
+                                self._refToMiddleName = info[1]
+                        elif "last" in info[0].lower() :
+                            if not self._refToLastName:
+                                self._refToLastName = info[1]
+                        if not self._refToName:
+                            
+                            self._refToName = fname + ' ' + mname + ' ' + lname 
+                                                                        
                             
                 if not self._refToDate:
                         for info in kvContent :
@@ -880,7 +1202,7 @@ class ExtractMedicalInfo():
                     if len(line[0].split(" ")) > 5 :
                         continue
 
-            
+                
                 height , top , left , width = None , None, None, None
                 addWidth = self.checkPateintReferInfoInSameLine(current = "refer" ,  check = "patient")
                 
@@ -890,16 +1212,19 @@ class ExtractMedicalInfo():
                 width = round(line[1][0],2)
                 originalheight =  height + top                  
                 height = height + top                
-                height = height + 0.20
+                height = height + 0.30
                 width = width + left
                 width = width + 0.10
                 left = left - 0.10
                 
                 
-                if "from" in line[0].lower() and len(line[0].split(" ")) > 3: 
+                if "from" in line[0].lower() and len(line[0].replace(" ", "")) > 20: 
                     
                     continue 
+
  
+                                    
+                                    
                 for line in self._lineContents : 
                     if str(line[0]).lstrip().rstrip():
                         if round(float(line[1][2]),3) >= top :  
@@ -911,10 +1236,36 @@ class ExtractMedicalInfo():
                 if not addWidth:
                     width = None
                     left = None
+                
+                if not addWidth:
+                    for line in self._lineContents : 
+                        if str(line[0]).lstrip().rstrip():
+                            if round(float(line[1][2]),3) >= top :  
+                                if round(float(line[1][2]),3) <= height:   
+                                    if eval(self.generateIfCond(self._controlStatement.get("patientInfoInLine"),'line[0].lower()' )):
+                                        if line[0]:
+                                            if len(line[0].split(" ")) > 5 :
+                                                continue
+    
+                                            height = round(line[1][1],2)
+                                            height = top + height + 0.01
+                                            break
+                                    
+                                    if eval(self.generateIfCond(self._controlStatement.get("referToInfoInLine"),'line[0].lower()' )):
+                                        if line[0]:
+                                            if len(line[0].split(" ")) > 5 :
+                                                continue
+                                            if "to" in line[0].lower() and len(line[0].replace(" ", "")) > 20: 
+                                                continue
+                                            height = round(line[1][1],2)
+                                            height = top + height + 0.01
+                                            break   
                 kvContent = self.extractKeyValueFromTable(top , height, left , width)
                 
-                 
+                
+                fname , mname , lname, name  = '' , '' , '' , ''
                 for info in kvContent :
+                    
                     
                     if not self._refByName:
                         #if ("by" in info[0].lower()) or ("from" in info[0].lower()) or ("name" in info[0].lower()):
@@ -925,7 +1276,94 @@ class ExtractMedicalInfo():
                                         if not self._refByName:
                                             
                                             self._refByName = info[1]
-                        
+                                            
+                                            
+                    if "name" in info[0].lower():
+                        info[1] = info[1].lstrip().rstrip()
+                        if ("first" in info[0].lower()) and ("last" in info[0].lower()) and ("middle" in info[0].lower()) :
+                            findex = info[0].lower().index("first")
+                            mindex = info[0].lower().index("middle")
+                            lindex = info[0].lower().index("last")
+                            d = {"findex": findex , "mindex": mindex , "lindex": lindex}
+                            sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                            sortKeys = list(sortedD.keys())
+                            findex = sortKeys.index("findex")
+                            mindex = sortKeys.index("mindex")
+                            lindex = sortKeys.index("lindex")
+                           
+                            
+                            if "," in info[1]:
+                                nm = info[1].split(',')
+                            else :
+                                nm = info[1].split(' ')
+        
+                            if not self._refByFirstName:
+                                try :
+                                    self._refByFirstName = nm[findex]
+                                except IndexError:
+                                    self._refByFirstName = None
+                                    
+                            if not self._refByLastName:
+                                try:
+                                    self._refByLastName = nm[lindex]
+                                except IndexError:
+                                    self._refByLastName = None
+                                    
+                            if not self._refByMiddleName :
+                                try:
+                                    self._refByMiddleName = nm[mindex]
+                                except IndexError:
+                                    self._refByMiddleName = None
+                                
+                        elif ("first" in info[0].lower()) and ("last" in info[0].lower()):
+                            
+                            findex = info[0].lower().index("first")
+                            lindex = info[0].lower().index("last")
+                            d = {"findex": findex ,  "lindex": lindex}
+                            sortedD = dict(sorted(d.items(), key=lambda item: item[1]))
+                            sortKeys = list(sortedD.keys())
+                            findex = sortKeys.index("findex")
+                            lindex = sortKeys.index("lindex")
+                            if "," in info[1]:
+                                nm = info[1].split(',')
+                            else :
+                                nm = info[1].split(' ')
+                            if not self._refByFirstName:
+                                try :
+                                    self._refByFirstName = nm[findex]
+                                except IndexError:
+                                    self._refByFirstName = None
+                                    
+                            if not self._refByLastName:
+                                try:
+                                    self._refByLastName = nm[lindex]
+                                except IndexError:
+                                    self._refByLastName = None
+        
+                        if "first" in info[0].lower() :
+                          
+                            fname = info[1]
+                            if not self._refByFirstName:
+                                self._refByFirstName = info[1]
+                        elif "middle" in info[0].lower() :
+                          
+                            mname = info[1]
+                            if not self._refByMiddleName:
+                                self._refByMiddleName = info[1]
+                        elif "last" in info[0].lower() :
+                            if not self._refByLastName:
+                                self._refByLastName = info[1]
+                        if not self._refToName:
+                            self._refByName = fname + ' ' + mname + ' ' + lname                      
+                 
+                for info in kvContent :
+                    
+
+
+
+  
+                            
+                            
                     if not self._refByAddress:
                         #if ("address" in info[0].lower()) and ("symptom" not in info[0].lower()):
                         if eval(self.generateIfCond(self._controlStatement.get("referByAddressInLine"),'info[0].lower()' )):    
@@ -1073,7 +1511,7 @@ class ExtractMedicalInfo():
             "MedInfoJsonMap": {
                 "patient_name": self._patientName,
                 "patient_firstname:": self._patientFirstName,
-                "patient_middleName:" : self._patientMiddleName ,
+                "patient_middlename:" : self._patientMiddleName ,
                 "patient_lastname:" : self._patientLastName,
                 "patient_dob": self._patientDOB,
                 "patient_mrn": self._patientMRN,
@@ -1084,6 +1522,9 @@ class ExtractMedicalInfo():
                 "patient_st_zip": self._patientStZip,
                 "patient_state": self._patientState,
                 "ref_to_name": self._refToName,
+                "ref_to_firstname" : self._refToFirstName,
+                "ref_to_middlename" : self._refToMiddleName,
+                "ref_to_lastname" : self._refToLastName,
                 "ref_date": self._refToDate,
                 "ref_to_address": self._refToAddress,
                 "ref_to_city": self._refToCity,
@@ -1092,6 +1533,9 @@ class ExtractMedicalInfo():
                 "ref_to_phone": self._refToPhone,
                 "ref_to_fax": self._refToFax,
                 "ref_by_name": self._refByName,
+                "ref_by_firstname" : self._refByFirstName,
+                "ref_by_lastname" : self._refByLastName,
+                "ref_by_middlename" : self._refByMiddleName ,
                 "ref_by_address": self._refByAddress,
                 "ref_by_city": self._refByCity,
                 "ref_by_st_zip": self._refByStZip,
@@ -1299,7 +1743,7 @@ class ExtractMedicalInfo():
                  
                 height = height + top 
                 width = left + width
-                height  = height + 0.01
+                #height  = height + 0.01
         
                 left = None
                 for line in self._lineContents : 
@@ -1325,6 +1769,9 @@ class ExtractMedicalInfo():
         if lineCheck:
             for line in lineCheck:
                 if eval(condition):
+                    
+                    if len(line[0].split(" ")) > 5 :
+                        continue
                     
                     return True
         return False
@@ -1478,7 +1925,20 @@ class ExtractMedicalInfo():
              
             if phone.isalpha():
                 self._refByPhone = None
-                
+        
+        if self._refToName:
+            if str(self._refToFirstName) not in self._refToName  :
+                if str(self._refToMiddleName) not in self._refToName:
+                    if str(self._refToLastName) not in self._refToName  :
+                        self._refToFirstName , self._refToMiddleName , self._refToLastName = None , None , None
+      
+
+        if self._refByName:
+            if str(self._refByFirstName) not in self._refByName  :
+                if str(self._refByMiddleName) not in self._refByName  :
+                    if str(self._refByLastName) not in self._refByName  :
+                        self._refByFirstName , self._refByMiddleName , self._refByLastName = None , None , None
+                      
     def extractReferalReasonFromTable(self):
         
         referalReasonTable = False
