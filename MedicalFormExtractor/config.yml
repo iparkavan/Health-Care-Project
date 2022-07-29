@@ -2,6 +2,12 @@ keywords:
     keyvaluepair:
         patientname:
               - patient & name
+        patientFirstName:
+              - patient & first & name
+        patientLastName:
+              - patient & last & name
+        patientMiddleName:
+              - patient & middle & name             
         patientmrn:
               - mrn
         patientdob:
